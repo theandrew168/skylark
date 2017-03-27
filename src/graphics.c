@@ -2,6 +2,13 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
+typedef struct screen_t {
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    bool pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
+    uint8_t pixel_color[3];
+} screen_t;
+
 static screen_t screen;
 
 void graphics_init() {

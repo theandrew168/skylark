@@ -9,13 +9,6 @@
 #define SCREEN_WIDTH 64
 #define SCREEN_HEIGHT 32
 
-typedef struct {
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    bool pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
-    uint8_t pixel_color[3];
-} screen_t;
-
 void graphics_init();
 void graphics_terminate();
 void graphics_clearScreen();

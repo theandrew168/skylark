@@ -4,7 +4,54 @@
 #include <stdbool.h>
 
 /*
+ * 2-byte opcodes
+ */
+typedef uint16_t opcode_t;
+
+/*
+ * 4K memory
+ * 16 8-bit registers
+ * Index register
+ * Program counter
+ *
+ * Program stack (size 16)
+ * Stack pointer
+ *
+ * 16-key input status
+ *
+ * 2048 (64 * 32) pixels
+ * Delay timer
+ * Sound timer
+ *
+ * Draw requested flag
+ */
+typedef struct chip8_t {
+    uint8_t memory[4096];
+    uint8_t V[16];
+    uint16_t I;
+    uint16_t pc;
+
+    uint16_t stack[16];
+    uint16_t sp;
+
+    uint8_t keys[16];
+
+    uint8_t pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
+    uint8_t timer_delay;
+    uint8_t timer_sound;
+
+    bool drawRequested;
+} chip8_t;
+
+
+/*
  * Chip8 font information
+ * 'A', for example:
+ * 11110000
+ * 10010000
+ * 11110000
+ * 10010000
+ * 10010000
  */
 static uint8_t chip8_fontset[80] = { 
     0xF0, 0x90, 0x90, 0x90, 0xF0, /* 0 */
