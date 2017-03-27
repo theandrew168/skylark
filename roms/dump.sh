@@ -5,4 +5,4 @@ if [[ $# -eq 0 ]]; then
     exit -1
 fi
 
-od --endian=big -An -vtx2 -w1 $1 | cut -c2-
+od --endian=big -An -vtx2 -w2 $1 | cut -c2-

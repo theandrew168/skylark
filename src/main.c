@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "chip8.h"
 
 int main() {
     int x, y;
