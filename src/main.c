@@ -4,6 +4,10 @@
 int main() {
     int x, y;
 
+    chip8_init();
+    chip8_loadROM("roms/PONG");
+    chip8_terminate();
+
     graphics_init();
 
     for (y = 0; y < SCREEN_HEIGHT; y++) {

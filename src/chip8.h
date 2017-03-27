@@ -24,6 +24,8 @@ typedef uint16_t opcode_t;
  * 2048 pixels
  * Delay timer
  * Sound timer
+ *
+ * Draw requested flag
  */
 typedef struct chip8_t {
     uint8_t memory[4096];
@@ -39,6 +41,8 @@ typedef struct chip8_t {
     uint8_t pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
     uint8_t timer_delay;
     uint8_t timer_sound;
+
+    bool drawRequested;
 } chip8_t;
 
 void chip8_init();
