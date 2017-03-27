@@ -27,7 +27,7 @@ typedef uint16_t opcode_t;
  *
  * Draw requested flag
  */
-typedef struct chip8_t {
+typedef struct {
     uint8_t memory[4096];
     uint8_t V[16];
     uint16_t I;

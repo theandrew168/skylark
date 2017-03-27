@@ -9,7 +9,7 @@
 #define SCREEN_WIDTH 64
 #define SCREEN_HEIGHT 32
 
-typedef struct screen_t {
+typedef struct {
     SDL_Window* window;
     SDL_Renderer* renderer;
     bool pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
