@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
-screen_t screen;
+static screen_t screen;
 
 void graphics_init() {
     screen.window = NULL;
@@ -43,14 +43,14 @@ void graphics_clearScreen() {
 }
 
 void graphics_clearPixels() {
-    uint16_t i;
+    size_t i;
     for (i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
         screen.pixels[i] = false;
     }
 }
 
 void graphics_draw() {
-    uint8_t x, y;
+    size_t x, y;
     SDL_Rect pixel;
 
     pixel.w = PIXEL_SIZE;

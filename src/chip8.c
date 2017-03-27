@@ -6,7 +6,7 @@
 /*
  * Chip8 font information
  */
-uint8_t chip8_fontset[80] = { 
+static uint8_t chip8_fontset[80] = { 
     0xF0, 0x90, 0x90, 0x90, 0xF0, /* 0 */
     0x20, 0x60, 0x20, 0x20, 0x70, /* 1 */
     0xF0, 0x10, 0xF0, 0x80, 0xF0, /* 2 */
@@ -25,9 +25,12 @@ uint8_t chip8_fontset[80] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80  /* F */
 };
 
-chip8_t chip8;
+static chip8_t chip8;
 
 void chip8_init() {
+    /* TODO Remove this */
+    (void)chip8_fontset;
+
     memset(chip8.memory, 0, 4096);
     memset(chip8.V, 0, 16);
     
