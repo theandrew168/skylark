@@ -38,8 +38,8 @@ typedef struct chip8_t {
     uint8_t keys[16];
 
     uint8_t pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
-    uint8_t timer_delay;
-    uint8_t timer_sound;
+    uint8_t delay_timer;
+    uint8_t sound_timer;
 
     bool drawRequested;
     bool clearRequested;
@@ -91,8 +91,8 @@ void chip8_init() {
     memset(chip8.keys, 0, 16);
 
     memset(chip8.pixels, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
-    chip8.timer_delay = 0;
-    chip8.timer_sound = 0;
+    chip8.delay_timer = 0;
+    chip8.sound_timer = 0;
 
     chip8.drawRequested = false;
     chip8.clearRequested = false;
@@ -201,42 +201,90 @@ void chip8_emulateCycle() {
                     chip8.V[x] = chip8.V[y];
                     break;
                 case 0x0001: /* 8xy1 - OR Vx, Vy */
+                    chip8.V[x] |= chip8.V[y];
                     break;
                 case 0x0002: /* 8xy2 - AND Vx, Vy */
+                    chip8.V[x] &= chip8.V[y];
                     break;
                 case 0x0003: /* 8xy3 - XOR Vx, Vy */
+                    chip8.V[x] ^= chip8.V[y];
                     break;
                 case 0x0004: /* 8xy4 - ADD Vx, Vy */
+                    chip8.V[0xF] = (chip8.V[x] + chip8.V[y] > 0xFF) ? 1 : 0;
+                    chip8.V[x] += chip8.V[y];
                     break;
                 case 0x0005: /* 8xy5 - SUB Vx, Vy */
+                    chip8.V[0xF] = (chip8.V[x] > chip8.V[y]) ? 1 : 0;
+                    chip8.V[x] -= chip8.V[y];
                     break;
                 case 0x0006: /* 8xy6 - SHR Vx {, Vy} */
+                    chip8.V[0xF] = chip8.V[x] & 0x01;
+                    chip8.V[x] >>= 1;
                     break;
                 case 0x0007: /* 8xy7 - SUBN Vx, Vy */
+                    chip8.V[0xF] = (chip8.V[y] > chip8.V[x]) ? 1 : 0;
+                    chip8.V[x] = chip8.V[y] = chip8.V[x];
                     break;
                 case 0x000E: /* 8xyE - SHL Vx {, Vy} */
+                    chip8.V[0xF] = chip8.V[x] & 0x80;
+                    chip8.V[x] <<= 1;
                     break;
             }
             break;
         case 0x9000: /* 9xy0 - SNE Vx, Vy */
+            if (chip8.V[x] != chip8.V[y]) chip8.pc += 2;
             break;
         case 0xA000: /* Annn - LD I, addr */
+            chip8.I = nnn;
             break;
         case 0xB000: /* Bnnn - JP V0, addr */
+            chip8.pc = nnn + chip8.V[0];
             break;
-        case 0xC000: /* Cxkk - RND Vx, byte */
+        case 0xC000: /* TODO Cxkk - RND Vx, byte */
             break;
-        case 0xD000: /* Dxyn - DRW Vx, Vy, nibble */
+        case 0xD000: /* TODO Dxyn - DRW Vx, Vy, nibble */
             break;
-        case 0xE000: /* Exxx group */
+        case 0xE000:
+            switch (opcode & 0x00FF) {
+                case 0x009E: /* Ex9E - SKP Vx */
+                    if (chip8.keys[chip8.V[x]]) chip8.pc += 2;
+                    break;
+                case 0x00A1: /* ExA1 - SKNP Vx */
+                    if (!chip8.keys[chip8.V[x]]) chip8.pc += 2;
+                    break;
+            }
             break;
-        case 0xF000: /* Fxxx group */
+        case 0xF000:
+            switch (opcode & 0x00FF) {
+                case 0x0007: /* Fx07 - LD Vx, DT */
+                    chip8.V[x] = chip8.delay_timer;
+                    break;
+                case 0x000A: /* TODO Fx0A - LD Vx, K */
+                    break; 
+                case 0x0015: /* Fx15 - LD DT, Vx */
+                    chip8.delay_timer = chip8.V[x];
+                    break;
+                case 0x0018: /* Fx18 - LD ST, Vx */
+                    chip8.sound_timer = chip8.V[x];
+                    break;
+                case 0x001E: /* Fx1E - ADD I, Vx */
+                    chip8.I += chip8.V[x];
+                    break;
+                case 0x0029: /* TODO Fx29 - LD F, Vx */
+                    break;
+                case 0x0033: /* TODO Fx33 - LD B, Vx */
+                    break;
+                case 0x0055: /* TODO Fx55 - LD [I], Vx */
+                    break;
+                case 0x0065: /* TODO Fx65 - LD Vx, [I] */
+                    break;
+            }
             break;
     }
 }
 
 void chip8_updateInput() {
-
+    /* TODO */
 }
 
 bool chip8_drawRequested() {
