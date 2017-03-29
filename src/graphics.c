@@ -1,12 +1,14 @@
 #include "graphics.h"
+
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include "types.h"
 
 typedef struct screen_t {
     SDL_Window* window;
     SDL_Renderer* renderer;
     bool pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
-    uint8_t pixel_color[3];
+    uint8 pixel_color[3];
 } screen_t;
 
 static screen_t screen;
@@ -85,13 +87,13 @@ void graphics_draw() {
     SDL_RenderPresent(screen.renderer);
 }
 
-void graphics_setPixelColor(uint8_t r, uint8_t g, uint8_t b) {
+void graphics_setPixelColor(uint8 r, uint8 g, uint8 b) {
     screen.pixel_color[0] = r;
     screen.pixel_color[1] = g;
     screen.pixel_color[2] = b;
 }
 
-void graphics_setPixel(uint8_t x, uint8_t y, bool on) {
+void graphics_setPixel(uint8 x, uint8 y, bool on) {
     if (x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT) {
         printf("Attempt to set invalid pixel: (%u, %u)\n", x, y);
         return;

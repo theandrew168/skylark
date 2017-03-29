@@ -1,12 +1,12 @@
 #include "chip8.h"
+
 #include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include "types.h"
 
 /*
  * 2-byte opcodes
  */
-typedef uint16_t opcode_t;
+typedef uint16 opcode_t;
 
 /*
  * 4K memory
@@ -27,19 +27,19 @@ typedef uint16_t opcode_t;
  * Screen clear requested flag
  */
 typedef struct chip8_t {
-    uint8_t memory[4096];
-    uint8_t V[16];
-    uint16_t I;
-    uint16_t pc;
+    uint8 memory[4096];
+    uint8 V[16];
+    uint16 I;
+    uint16 pc;
 
-    uint16_t stack[16];
-    uint16_t sp;
+    uint16 stack[16];
+    uint16 sp;
 
-    uint8_t keys[16];
+    uint8 keys[16];
 
-    uint8_t pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
-    uint8_t delay_timer;
-    uint8_t sound_timer;
+    uint8 pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
+    uint8 delay_timer;
+    uint8 sound_timer;
 
     bool drawRequested;
     bool clearRequested;
@@ -55,7 +55,7 @@ typedef struct chip8_t {
  * 10010000
  * 10010000
  */
-static uint8_t chip8_fontset[80] = { 
+static uint8 chip8_fontset[80] = { 
     0xF0, 0x90, 0x90, 0x90, 0xF0, /* 0 */
     0x20, 0x60, 0x20, 0x20, 0x70, /* 1 */
     0xF0, 0x10, 0xF0, 0x80, 0xF0, /* 2 */
@@ -109,7 +109,7 @@ void chip8_terminate() {
 
 void chip8_loadROM(const char* rom) {
     size_t i, length, bytes_read;
-    uint8_t* buffer;
+    uint8* buffer;
 
     FILE* file = fopen(rom, "rb");
     if (!file) {
@@ -121,7 +121,7 @@ void chip8_loadROM(const char* rom) {
     length = ftell(file);
     rewind(file);
 
-    buffer = (uint8_t*)malloc(sizeof(uint8_t) * length);
+    buffer = (uint8*)malloc(sizeof(uint8) * length);
     if (!buffer) {
         printf("Failed to allocate memory for ROM: %s\n", rom);
         fclose(file);
@@ -149,7 +149,7 @@ void chip8_loadROM(const char* rom) {
 
 void chip8_emulateCycle() {
     opcode_t opcode;
-    uint16_t nnn, kk, x, y; /* n; */
+    uint16 nnn, kk, x, y; /* n; */
 
     /* Parse out relevant fields */
     opcode = chip8.memory[chip8.pc] << 8 | chip8.memory[chip8.pc + 1];

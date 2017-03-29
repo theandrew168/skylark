@@ -1,42 +1,34 @@
 #include "graphics.h"
+#include "input.h"
 #include "chip8.h"
 
 int main() {
-    int x, y;
+    int x;
+
+    graphics_init();
+    input_init();
 
     chip8_init();
     chip8_loadROM("roms/PONG");
     chip8_terminate();
 
-
-    graphics_init();
-
-    for (y = 0; y < SCREEN_HEIGHT; y++) {
-        for (x = 0; x < SCREEN_WIDTH; x++) {
-            if (x == y) continue;
-            graphics_setPixel(x, y, true);
-            graphics_draw();
-        }
-    }
-
-    SDL_Delay(2000);
-
-    graphics_clearScreen();
-    graphics_clearPixels();
-    graphics_draw();
-
-    SDL_Delay(1000);
-
-    for (y = 0; y < SCREEN_HEIGHT; y++) {
-        for (x = 0; x < SCREEN_WIDTH; x++) {
-            if (x != y) continue;
-            graphics_setPixel(x, y, true);
-        }
-    }
-
     graphics_setPixelColor(128, 0, 128);
-    graphics_draw();
-    SDL_Delay(2000);
+    while (!input_closeRequested()) {
+        graphics_clearPixels();
+        graphics_clearScreen();
+        input_update();
+
+        for (x = 0; x < 16; x++) {
+            graphics_setPixel(x, x, true);
+            if (input_isKeyDown(x)) {
+                printf("Key down: %u\n", x);
+            }
+        }
+
+        graphics_draw();
+        SDL_Delay(500);
+    }
+
     graphics_terminate();
 
     return 0;

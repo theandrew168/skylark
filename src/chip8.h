@@ -1,8 +1,7 @@
 #ifndef SKYLARK_CHIP8_H
 #define SKYLARK_CHIP8_H
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "types.h"
 #include "graphics.h"
 
 void chip8_init();
