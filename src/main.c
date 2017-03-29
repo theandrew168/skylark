@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "graphics.h"
 #include "input.h"
 #include "chip8.h"
