@@ -22,12 +22,12 @@ Once built, skylark can be ran via:
 
 ## Directories
 `roms/` - Chip8 games used for playing / testing the emulator  
-`src/`  - Emulator source code  
+`src/` - Emulator source code  
 
 ## Libraries
 [SDL2](https://www.libsdl.org/index.php) (zlib) - Window creation / basic rendering  
 
 ## References
-[Emulator Tutorial](http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/)
-[Chip8 Specification](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)
+[Emulator Tutorial](http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/)  
+[Chip8 Specification](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)  
 
