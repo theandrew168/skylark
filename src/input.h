@@ -6,7 +6,7 @@
 
 void input_init();
 void input_update();
-bool input_closeRequested();
-bool input_isKeyDown(uint8 key);
+bool input_close_requested();
+bool input_is_key_down(int key);
 
 #endif

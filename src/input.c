@@ -40,7 +40,7 @@ void input_init() {
 }   
 
 void input_update() {
-    size_t i;
+    int i;
     memset(input.keys, 0, NUM_KEYS);
 
     /* Poll events from window */
@@ -68,11 +68,11 @@ void input_update() {
     } 
 }
 
-bool input_closeRequested() {
+bool input_close_requested() {
     return input.closeRequested;
 }
 
-bool input_isKeyDown(uint8 key) {
+bool input_is_key_down(int key) {
     if (key >= NUM_KEYS) {
         printf("Invalid key: %u", key);
         return false;

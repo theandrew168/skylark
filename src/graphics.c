@@ -7,24 +7,26 @@
 typedef struct screen_t {
     SDL_Window* window;
     SDL_Renderer* renderer;
+    int pixel_size;
     bool pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
-    uint8 pixel_color[3];
+    unsigned char pixel_r, pixel_g, pixel_b;
 } screen_t;
 
 static screen_t screen;
 
-void graphics_init() {
+void graphics_init(const char* title, int pixel_size) {
     screen.window = NULL;
     screen.renderer = NULL;
+    screen.pixel_size = pixel_size;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("Failed to init SDL2. SDL_Error: %s\n", SDL_GetError());
         exit(-1);
     }
 
-    screen.window = SDL_CreateWindow("Skylark Chip8 Emulator",
+    screen.window = SDL_CreateWindow(title,
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        SCREEN_WIDTH * PIXEL_SIZE, SCREEN_HEIGHT * PIXEL_SIZE,
+        SCREEN_WIDTH * screen.pixel_size, SCREEN_HEIGHT * screen.pixel_size,
         SDL_WINDOW_SHOWN);
     if (!screen.window) {
         printf("Failed to create SDL2 window. SDL_Error: %s\n", SDL_GetError());
@@ -38,8 +40,8 @@ void graphics_init() {
         exit(-1);
     }
 
-    graphics_setPixelColor(255, 255, 255);
-    graphics_clearPixels();
+    graphics_set_pixel_color(255, 255, 255);
+    graphics_clear_pixels();
 }
 
 void graphics_terminate() {
@@ -47,35 +49,32 @@ void graphics_terminate() {
     SDL_Quit();
 }
 
-void graphics_clearScreen() {
+void graphics_clear_screen() {
     SDL_RenderClear(screen.renderer);
 }
 
-void graphics_clearPixels() {
-    size_t i;
+void graphics_clear_pixels() {
+    int i;
     for (i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
         screen.pixels[i] = false;
     }
 }
 
 void graphics_draw() {
-    size_t x, y;
+    int x, y;
     SDL_Rect pixel;
 
-    pixel.w = PIXEL_SIZE;
-    pixel.h = PIXEL_SIZE;
+    pixel.w = screen.pixel_size;
+    pixel.h = screen.pixel_size;
 
     for (y = 0; y < SCREEN_HEIGHT; y++) {
         for (x = 0; x < SCREEN_WIDTH; x++) {
-            pixel.x = x * PIXEL_SIZE;
-            pixel.y = y * PIXEL_SIZE;
+            pixel.x = x * screen.pixel_size;
+            pixel.y = y * screen.pixel_size;
 
             if (screen.pixels[x + y * SCREEN_WIDTH]) {
                 SDL_SetRenderDrawColor(screen.renderer,
-                    screen.pixel_color[0],
-                    screen.pixel_color[1],
-                    screen.pixel_color[2],
-                    255);
+                    screen.pixel_r, screen.pixel_g, screen.pixel_b, 255);
             } else {
                 SDL_SetRenderDrawColor(screen.renderer, 0, 0, 0, 255);
             }
@@ -87,14 +86,14 @@ void graphics_draw() {
     SDL_RenderPresent(screen.renderer);
 }
 
-void graphics_setPixelColor(uint8 r, uint8 g, uint8 b) {
-    screen.pixel_color[0] = r;
-    screen.pixel_color[1] = g;
-    screen.pixel_color[2] = b;
+void graphics_set_pixel_color(unsigned char r, unsigned char g, unsigned char b) {
+    screen.pixel_r = r;
+    screen.pixel_g = g;
+    screen.pixel_b = b;
 }
 
-void graphics_setPixel(uint8 x, uint8 y, bool on) {
-    if (x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT) {
+void graphics_set_pixel(int x, int y, bool on) {
+    if (x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT || x < 0 || y < 0) {
         printf("Attempt to set invalid pixel: (%u, %u)\n", x, y);
         return;
     }

@@ -7,7 +7,7 @@
 /*
  * 2-byte opcodes
  */
-typedef uint16 opcode_t;
+typedef unsigned short opcode_t;
 
 /*
  * 4K memory
@@ -28,19 +28,19 @@ typedef uint16 opcode_t;
  * Screen clear requested flag
  */
 typedef struct chip8_t {
-    uint8 memory[4096];
-    uint8 V[16];
-    uint16 I;
-    uint16 pc;
+    unsigned char memory[4096];
+    unsigned char V[16];
+    unsigned short I;
+    unsigned short pc;
 
-    uint16 stack[16];
-    uint16 sp;
+    unsigned short stack[16];
+    unsigned short sp;
 
-    uint8 keys[16];
+    unsigned char keys[16];
 
-    uint8 pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
-    uint8 delay_timer;
-    uint8 sound_timer;
+    unsigned char pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
+    unsigned char delay_timer;
+    unsigned char sound_timer;
 
     bool drawRequested;
     bool clearRequested;
@@ -56,7 +56,7 @@ typedef struct chip8_t {
  * 10010000
  * 10010000
  */
-static uint8 chip8_fontset[80] = { 
+static unsigned char chip8_fontset[80] = { 
     0xF0, 0x90, 0x90, 0x90, 0xF0, /* 0 */
     0x20, 0x60, 0x20, 0x20, 0x70, /* 1 */
     0xF0, 0x10, 0xF0, 0x80, 0xF0, /* 2 */
@@ -78,7 +78,7 @@ static uint8 chip8_fontset[80] = {
 static chip8_t chip8;
 
 void chip8_init() {
-    size_t i;
+    int i;
 
     memset(chip8.memory, 0, 4096);
     memset(chip8.V, 0, 16);
@@ -104,13 +104,9 @@ void chip8_init() {
     }
 }
 
-void chip8_terminate() {
-    /* Nothing to do here? */
-}
-
-void chip8_loadROM(const char* rom) {
-    size_t i, length, bytes_read;
-    uint8* buffer;
+void chip8_load_rom(const char* rom) {
+    int i, length, bytes_read;
+    unsigned char* buffer;
 
     FILE* file = fopen(rom, "rb");
     if (!file) {
@@ -122,7 +118,7 @@ void chip8_loadROM(const char* rom) {
     length = ftell(file);
     rewind(file);
 
-    buffer = (uint8*)malloc(sizeof(uint8) * length);
+    buffer = (unsigned char*)malloc(sizeof(unsigned char) * length);
     if (!buffer) {
         printf("Failed to allocate memory for ROM: %s\n", rom);
         fclose(file);
@@ -148,9 +144,9 @@ void chip8_loadROM(const char* rom) {
     free(buffer);
 }
 
-void chip8_emulateCycle() {
+void chip8_emulate_cycle() {
     opcode_t opcode;
-    uint16 nnn, kk, x, y; /* n; */
+    unsigned short nnn, kk, x, y; /* n; */
 
     /* Parse out relevant fields */
     opcode = chip8.memory[chip8.pc] << 8 | chip8.memory[chip8.pc + 1];
@@ -284,11 +280,11 @@ void chip8_emulateCycle() {
     }
 }
 
-void chip8_updateInput() {
+void chip8_update_input() {
     /* TODO */
 }
 
-bool chip8_drawRequested() {
+bool chip8_draw_requested() {
     if (chip8.drawRequested) {
         chip8.drawRequested = false;
         return true;
@@ -297,7 +293,7 @@ bool chip8_drawRequested() {
     }
 }
 
-bool chip8_clearRequested() {
+bool chip8_clear_requested() {
     if (chip8.clearRequested) {
         chip8.clearRequested = false;
         return true;

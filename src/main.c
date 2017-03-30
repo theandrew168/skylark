@@ -6,22 +6,21 @@
 int main() {
     int x;
 
-    graphics_init();
+    graphics_init("Skylark Chip8 Emulator", 16);
     input_init();
 
     chip8_init();
-    chip8_loadROM("roms/PONG");
-    chip8_terminate();
+    chip8_load_rom("roms/PONG");
 
-    graphics_setPixelColor(128, 0, 128);
-    while (!input_closeRequested()) {
-        graphics_clearPixels();
-        graphics_clearScreen();
+    graphics_set_pixel_color(128, 0, 128);
+    while (!input_close_requested()) {
+        graphics_clear_pixels();
+        graphics_clear_screen();
         input_update();
 
         for (x = 0; x < 16; x++) {
-            graphics_setPixel(x, x, true);
-            if (input_isKeyDown(x)) {
+            graphics_set_pixel(x, x, true);
+            if (input_is_key_down(x)) {
                 printf("Key down: %u\n", x);
             }
         }

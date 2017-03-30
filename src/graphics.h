@@ -4,16 +4,15 @@
 #include <SDL2/SDL.h>
 #include "types.h"
 
-#define PIXEL_SIZE 16
 #define SCREEN_WIDTH 64
 #define SCREEN_HEIGHT 32
 
-void graphics_init();
+void graphics_init(const char* title, int pixel_size);
 void graphics_terminate();
-void graphics_clearScreen();
-void graphics_clearPixels();
+void graphics_clear_screen();
+void graphics_clear_pixels();
 void graphics_draw();
-void graphics_setPixelColor(uint8 r, uint8 g, uint8 b);
-void graphics_setPixel(uint8 x, uint8 y, bool on);
+void graphics_set_pixel_color(unsigned char r, unsigned char g, unsigned char b);
+void graphics_set_pixel(int x, int y, bool on);
 
 #endif
