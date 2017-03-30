@@ -1,7 +1,9 @@
 #include "chip8.h"
 
-#include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <time.h>
 #include "types.h"
 
 /*
@@ -102,16 +104,19 @@ void chip8_init() {
     for (i = 0; i < 80; i++) {
         chip8.memory[i] = chip8_fontset[i];
     }
+
+    /* Seed the RNG */
+    srand(time(NULL));
 }
 
-void chip8_load_rom(const char* rom) {
+bool chip8_load_rom(const char* rom) {
     int i, length, bytes_read;
     unsigned char* buffer;
 
     FILE* file = fopen(rom, "rb");
     if (!file) {
         printf("Unable to locate ROM: %s\n", rom);
-        return;
+        return false;
     }
 
     fseek(file, 0, SEEK_END);
@@ -122,7 +127,7 @@ void chip8_load_rom(const char* rom) {
     if (!buffer) {
         printf("Failed to allocate memory for ROM: %s\n", rom);
         fclose(file);
-        return;
+        return false;
     }
 
     bytes_read = fread(buffer, 1, length, file);
@@ -130,18 +135,17 @@ void chip8_load_rom(const char* rom) {
         printf("Failed to read ROM: %s\n", rom);
         free(buffer);
         fclose(file);
+        return false;
     }
 
-    if (length < (0xFFF - 0x200)) {
-        for (i = 0; i < length; i++) {
-            chip8.memory[0x200 + i] = buffer[i];
-        }
-    } else {
-        printf("ROM too big for memory: %s\n", rom);
+    for (i = 0; i < length; i++) {
+        chip8.memory[0x200 + i] = buffer[i];
     }
 
     fclose(file);
     free(buffer);
+
+    return true;
 }
 
 void chip8_emulate_cycle() {

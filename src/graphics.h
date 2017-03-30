@@ -7,7 +7,7 @@
 #define SCREEN_WIDTH 64
 #define SCREEN_HEIGHT 32
 
-void graphics_init(const char* title, int pixel_size);
+bool graphics_init(const char* title, int pixel_size);
 void graphics_terminate();
 void graphics_clear_screen();
 void graphics_clear_pixels();

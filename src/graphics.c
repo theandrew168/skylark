@@ -14,14 +14,14 @@ typedef struct screen_t {
 
 static screen_t screen;
 
-void graphics_init(const char* title, int pixel_size) {
+bool graphics_init(const char* title, int pixel_size) {
     screen.window = NULL;
     screen.renderer = NULL;
     screen.pixel_size = pixel_size;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("Failed to init SDL2. SDL_Error: %s\n", SDL_GetError());
-        exit(-1);
+        return false;
     }
 
     screen.window = SDL_CreateWindow(title,
@@ -30,18 +30,20 @@ void graphics_init(const char* title, int pixel_size) {
         SDL_WINDOW_SHOWN);
     if (!screen.window) {
         printf("Failed to create SDL2 window. SDL_Error: %s\n", SDL_GetError());
-        exit(-1);
+        return false;
     }
 
     screen.renderer = SDL_CreateRenderer(screen.window, -1, SDL_RENDERER_ACCELERATED);
     if (!screen.renderer) {
         printf("Failed to create SDL2 renderer. SDL_Error: %s\n", SDL_GetError());
         SDL_DestroyWindow(screen.window);
-        exit(-1);
+        return false;
     }
 
     graphics_set_pixel_color(255, 255, 255);
     graphics_clear_pixels();
+
+    return true;
 }
 
 void graphics_terminate() {

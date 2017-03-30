@@ -3,16 +3,27 @@
 #include "input.h"
 #include "chip8.h"
 
-int main() {
+int main(int argc, char** argv) {
     int x;
 
-    graphics_init("Skylark Chip8 Emulator", 16);
+    /* Ensure a ROM was passed to skylark */
+    if (argc != 2) {
+        printf("Usage: %s <rom_file>\n", argv[0]);
+        return 1;
+    }
+
+    if (!graphics_init("Skylark Chip8 Emulator", 16)) {
+        return 1;
+    }
+
+    graphics_set_pixel_color(128, 0, 128);
     input_init();
 
     chip8_init();
-    chip8_load_rom("roms/PONG");
+    if (!chip8_load_rom(argv[1])) {
+        return 1;
+    }
 
-    graphics_set_pixel_color(128, 0, 128);
     while (!input_close_requested()) {
         graphics_clear_pixels();
         graphics_clear_screen();
@@ -26,7 +37,6 @@ int main() {
         }
 
         graphics_draw();
-        SDL_Delay(500);
     }
 
     graphics_terminate();

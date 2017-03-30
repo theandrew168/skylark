@@ -6,7 +6,7 @@
 
 void chip8_init();
 void chip8_terminate();
-void chip8_load_rom(const char* rom);
+bool chip8_load_rom(const char* rom);
 void chip8_emulate_cycle();
 void chip8_update_input();
 bool chip8_draw_requested();
