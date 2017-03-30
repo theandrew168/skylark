@@ -6,6 +6,12 @@
 #include <time.h>
 #include "types.h"
 
+#define MEM_SIZE 4096
+#define REG_SIZE 16
+#define STK_SIZE 16
+#define KEY_SIZE 16
+#define PC_START 0x200
+
 /*
  * 2-byte opcodes
  */
@@ -30,15 +36,15 @@ typedef unsigned short opcode_t;
  * Screen clear requested flag
  */
 typedef struct chip8_t {
-    unsigned char memory[4096];
-    unsigned char V[16];
+    unsigned char memory[MEM_SIZE];
+    unsigned char V[REG_SIZE];
     unsigned short I;
     unsigned short pc;
 
-    unsigned short stack[16];
+    unsigned short stack[STK_SIZE];
     unsigned short sp;
 
-    unsigned char keys[16];
+    unsigned char keys[KEY_SIZE];
 
     unsigned char pixels[SCREEN_WIDTH * SCREEN_HEIGHT];
     unsigned char delay_timer;
@@ -82,16 +88,16 @@ static chip8_t chip8;
 void chip8_init() {
     int i;
 
-    memset(chip8.memory, 0, 4096);
-    memset(chip8.V, 0, 16);
+    memset(chip8.memory, 0, MEM_SIZE);
+    memset(chip8.V, 0, REG_SIZE);
     
     chip8.I = 0;
-    chip8.pc = 0x200;
+    chip8.pc = PC_START;
 
-    memset(chip8.stack, 0, 16);
+    memset(chip8.stack, 0, STK_SIZE);
     chip8.sp = 0;
 
-    memset(chip8.keys, 0, 16);
+    memset(chip8.keys, 0, KEY_SIZE);
 
     memset(chip8.pixels, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
     chip8.delay_timer = 0;
@@ -139,7 +145,7 @@ bool chip8_load_rom(const char* rom) {
     }
 
     for (i = 0; i < length; i++) {
-        chip8.memory[0x200 + i] = buffer[i];
+        chip8.memory[PC_START + i] = buffer[i];
     }
 
     fclose(file);
@@ -156,8 +162,8 @@ void chip8_emulate_cycle() {
     opcode = chip8.memory[chip8.pc] << 8 | chip8.memory[chip8.pc + 1];
     nnn = opcode & 0x0FFF;
     kk = opcode & 0x00FF;
-    x = opcode & 0x0F00;
-    y = opcode & 0x00F0;
+    x = (opcode & 0x0F00) >> 8;
+    y = (opcode & 0x00F0) >> 4;
     /* n = opcode & 0x000F; */
 
     /* Decode instruction */
@@ -241,7 +247,8 @@ void chip8_emulate_cycle() {
         case 0xB000: /* Bnnn - JP V0, addr */
             chip8.pc = nnn + chip8.V[0];
             break;
-        case 0xC000: /* TODO Cxkk - RND Vx, byte */
+        case 0xC000: /* Cxkk - RND Vx, byte */
+            chip8.V[x] = ((unsigned char)(rand() % 256)) & kk;
             break;
         case 0xD000: /* TODO Dxyn - DRW Vx, Vy, nibble */
             break;
@@ -271,21 +278,33 @@ void chip8_emulate_cycle() {
                 case 0x001E: /* Fx1E - ADD I, Vx */
                     chip8.I += chip8.V[x];
                     break;
-                case 0x0029: /* TODO Fx29 - LD F, Vx */
+                case 0x0029: /* Fx29 - LD F, Vx */
+                    chip8.I = x * 5;
                     break;
-                case 0x0033: /* TODO Fx33 - LD B, Vx */
+                case 0x0033: /* Fx33 - LD B, Vx */
+                    chip8.memory[chip8.I]     = (chip8.V[x] / 100);
+                    chip8.memory[chip8.I + 1] = (chip8.V[x] / 10)  % 10;
+                    chip8.memory[chip8.I + 2] = (chip8.V[x] % 100) % 10;
                     break;
-                case 0x0055: /* TODO Fx55 - LD [I], Vx */
+                case 0x0055: /* Fx55 - LD [I], Vx */
+                    for (y = 0; y < x; y++) {
+                        chip8.memory[chip8.I + y] = chip8.V[y];
+                    }
                     break;
-                case 0x0065: /* TODO Fx65 - LD Vx, [I] */
+                case 0x0065: /* Fx65 - LD Vx, [I] */
+                    for (y = 0; y < x; y++) {
+                        chip8.V[y] = chip8.memory[chip8.I + y];
+                    }
                     break;
             }
             break;
     }
+
+    chip8.pc += 2;
 }
 
-void chip8_update_input() {
-    /* TODO */
+void chip8_set_key(int key, bool pressed) {
+    chip8.keys[key] = pressed;
 }
 
 bool chip8_draw_requested() {
