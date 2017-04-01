@@ -85,6 +85,15 @@ static unsigned char chip8_fontset[80] = {
 
 static chip8_t chip8;
 
+static int get_pressed_key() {
+    int i;
+    for (i = 0; i < KEY_SIZE; i++) {
+        if (chip8.keys[i]) return i;
+    }
+
+    return -1;
+}
+
 void chip8_init() {
     int i;
 
@@ -165,6 +174,8 @@ void chip8_emulate_cycle() {
     x = (opcode & 0x0F00) >> 8;
     y = (opcode & 0x00F0) >> 4;
     /* n = opcode & 0x000F; */
+
+    printf("Opcode: %x\n", opcode);
 
     /* Decode instruction */
     switch (opcode & 0xF000) {
@@ -251,6 +262,7 @@ void chip8_emulate_cycle() {
             chip8.V[x] = ((unsigned char)(rand() % 256)) & kk;
             break;
         case 0xD000: /* TODO Dxyn - DRW Vx, Vy, nibble */
+            printf("Drawing at %u, %u\n", x, y);
             break;
         case 0xE000:
             switch (opcode & 0x00FF) {
@@ -267,7 +279,9 @@ void chip8_emulate_cycle() {
                 case 0x0007: /* Fx07 - LD Vx, DT */
                     chip8.V[x] = chip8.delay_timer;
                     break;
-                case 0x000A: /* TODO Fx0A - LD Vx, K */
+                case 0x000A: /* Fx0A - LD Vx, K */
+                    if (get_pressed_key() < 0) return;
+                    chip8.V[x] = (unsigned char)get_pressed_key();
                     break; 
                 case 0x0015: /* Fx15 - LD DT, Vx */
                     chip8.delay_timer = chip8.V[x];

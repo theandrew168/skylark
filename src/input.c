@@ -5,8 +5,6 @@
 #include <stdio.h>
 #include "types.h"
 
-#define NUM_KEYS 16
-
 static SDL_Keycode gamepad[NUM_KEYS] = {
     SDLK_1,
     SDLK_2,

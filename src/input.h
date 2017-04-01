@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include "types.h"
 
+#define NUM_KEYS 16
+
 void input_init();
 void input_update();
 bool input_close_requested();

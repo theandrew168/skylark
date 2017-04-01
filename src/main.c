@@ -4,7 +4,7 @@
 #include "chip8.h"
 
 int main(int argc, char** argv) {
-    int x;
+    int i;
 
     /* Ensure a ROM was passed to skylark */
     if (argc != 2) {
@@ -27,16 +27,17 @@ int main(int argc, char** argv) {
     while (!input_close_requested()) {
         graphics_clear_pixels();
         graphics_clear_screen();
-        input_update();
 
-        for (x = 0; x < 16; x++) {
-            graphics_set_pixel(x, x, true);
-            if (input_is_key_down(x)) {
-                printf("Key down: %u\n", x);
-            }
+        chip8_emulate_cycle();
+
+        input_update();
+        for (i = 0; i < NUM_KEYS; i++) {
+            chip8_set_key(i, input_is_key_down(i));
         }
 
-        graphics_draw();
+        if (chip8_draw_requested()) {
+            graphics_draw();
+        }
     }
 
     graphics_terminate();
