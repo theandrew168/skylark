@@ -94,11 +94,27 @@ void graphics_set_pixel_color(unsigned char r, unsigned char g, unsigned char b)
     screen.pixel_b = b;
 }
 
-void graphics_set_pixel(int x, int y, bool on) {
-    if (x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT || x < 0 || y < 0) {
-        printf("Attempt to set invalid pixel: (%u, %u)\n", x, y);
-        return;
+bool graphics_set_pixel(int x, int y, bool on) {
+    bool collision = false;
+
+    /* Handle wrap-arounds */
+    if (x >= SCREEN_WIDTH) x = x - SCREEN_WIDTH;
+    if (x < 0) x = x + SCREEN_WIDTH;
+    if (y >= SCREEN_HEIGHT) y = y - SCREEN_HEIGHT;
+    if (y < 0) y = y + SCREEN_HEIGHT;
+
+    /* Check if pixel is being erased */
+    if (screen.pixels[x + y * SCREEN_WIDTH] && on) {
+        collision = true;
+    }
+    
+    /* Manually XOR the pixels*/
+    if ((screen.pixels[x + y * SCREEN_WIDTH] && !on) ||
+        (!screen.pixels[x + y * SCREEN_WIDTH] && on)) {
+        screen.pixels[x + y * SCREEN_WIDTH] = true;
+    } else {
+        screen.pixels[x + y * SCREEN_WIDTH] = false;
     }
 
-    screen.pixels[x + y * SCREEN_WIDTH] = on;
+    return collision;
 }

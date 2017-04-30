@@ -4,12 +4,10 @@
 #include "types.h"
 #include "graphics.h"
 
-void chip8_init();
+bool chip8_init();
 void chip8_terminate();
+bool chip8_running();
 bool chip8_load_rom(const char* rom);
 void chip8_emulate_cycle();
-void chip8_set_key(int key, bool pressed);
-bool chip8_draw_requested();
-bool chip8_clear_requested();
 
 #endif

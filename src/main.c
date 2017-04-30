@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include "graphics.h"
-#include "input.h"
 #include "chip8.h"
+#include "input.h"
+
+#define STEP 0
 
 int main(int argc, char** argv) {
-    int i;
 
     /* Ensure a ROM was passed to skylark */
     if (argc != 2) {
@@ -12,35 +12,28 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    if (!graphics_init("Skylark Chip8 Emulator", 16)) {
+    /* Initialize emulator */
+    if (!chip8_init()) {
         return 1;
     }
 
-    graphics_set_pixel_color(128, 0, 128);
-    input_init();
-
-    chip8_init();
+    /* Load ROM into emulator */
     if (!chip8_load_rom(argv[1])) {
         return 1;
     }
 
-    while (!input_close_requested()) {
-        graphics_clear_pixels();
-        graphics_clear_screen();
-
+    /* Loop until game ends */
+    while (chip8_running()) {
         chip8_emulate_cycle();
 
-        input_update();
-        for (i = 0; i < NUM_KEYS; i++) {
-            chip8_set_key(i, input_is_key_down(i));
-        }
-
-        if (chip8_draw_requested()) {
-            graphics_draw();
+        /* Step the emulator with 'z' */
+        while(STEP && !input_is_key_down(12)) {
+            input_update();
+            if (input_close_requested()) break;
         }
     }
 
-    graphics_terminate();
+    chip8_terminate();
 
     return 0;
 }

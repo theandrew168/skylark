@@ -13,6 +13,6 @@ void graphics_clear_screen();
 void graphics_clear_pixels();
 void graphics_draw();
 void graphics_set_pixel_color(unsigned char r, unsigned char g, unsigned char b);
-void graphics_set_pixel(int x, int y, bool on);
+bool graphics_set_pixel(int x, int y, bool on);
 
 #endif
