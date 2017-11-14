@@ -97,14 +97,8 @@ void graphics_set_pixel_color(unsigned char r, unsigned char g, unsigned char b)
 bool graphics_set_pixel(int x, int y, bool on) {
     bool collision = false;
 
-    /* Handle wrap-arounds */
-    if (x >= SCREEN_WIDTH) x = x - SCREEN_WIDTH;
-    if (x < 0) x = x + SCREEN_WIDTH;
-    if (y >= SCREEN_HEIGHT) y = y - SCREEN_HEIGHT;
-    if (y < 0) y = y + SCREEN_HEIGHT;
-
     /* Check if pixel is being erased */
-    if (screen.pixels[x + y * SCREEN_WIDTH] && on) {
+    if (screen.pixels[x + y * SCREEN_WIDTH] && !on) {
         collision = true;
     }
     

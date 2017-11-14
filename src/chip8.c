@@ -99,18 +99,18 @@ static void dump_registers() {
 static void reset_state() {
     int i;
 
-    memset(chip8.memory, 0, MEM_SIZE);
-    memset(chip8.V, 0, REG_SIZE);
+    memset(chip8.memory, 0, MEM_SIZE * sizeof(unsigned char));
+    memset(chip8.V, 0, REG_SIZE * sizeof(unsigned char));
     
     chip8.I = 0;
     chip8.pc = PC_START;
 
-    memset(chip8.stack, 0, STK_SIZE);
+    memset(chip8.stack, 0, STK_SIZE * sizeof(unsigned short));
     chip8.sp = 0;
 
-    memset(chip8.keys, 0, KEY_SIZE);
+    memset(chip8.keys, 0, KEY_SIZE * sizeof(unsigned char));
 
-    memset(chip8.pixels, 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+    memset(chip8.pixels, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(unsigned char));
     chip8.delay_timer = 0;
     chip8.sound_timer = 0;
 
@@ -194,6 +194,10 @@ bool chip8_load_rom(const char* rom) {
 static void pre_cycle() {
     input_update();
     graphics_clear_screen();
+}
+
+static void post_cycle() {
+    graphics_draw();
 
     if (chip8.delay_timer > 0) {
         --chip8.delay_timer;
@@ -203,10 +207,6 @@ static void pre_cycle() {
         printf("BEEP\n");
         --chip8.sound_timer;
     }
-}
-
-static void post_cycle() {
-    graphics_draw();
 }
 
 void chip8_emulate_cycle() {
@@ -226,7 +226,7 @@ void chip8_emulate_cycle() {
     y = (opcode & 0x00F0) >> 4;
     n = opcode & 0x000F;
 
-    printf("Opcode: %x\n", opcode);
+//    printf("Opcode: %x\n", opcode);
 
     /* Decode instruction */
     switch (opcode & 0xF000) {
@@ -236,7 +236,8 @@ void chip8_emulate_cycle() {
                     graphics_clear_pixels();
                     break;
                 case 0x00EE: /* 00EE - RET */
-                    chip8.pc = chip8.stack[chip8.sp--];
+                    --chip8.sp;
+                    chip8.pc = chip8.stack[chip8.sp];
                     break;
                 default:     /* 0nnn - JP addr */
                     chip8.pc = nnn;
@@ -248,8 +249,10 @@ void chip8_emulate_cycle() {
             chip8.pc -= 2;
             break;
         case 0x2000: /* 2nnn - CALL addr */
-            chip8.stack[++chip8.sp] = chip8.pc;
+            chip8.stack[chip8.sp] = chip8.pc;
+            ++chip8.sp;
             chip8.pc = nnn;
+            chip8.pc -= 2;
             break;
         case 0x3000: /* 3xkk - SE Vx, byte */
             if (chip8.V[x] == kk) chip8.pc += 2;
@@ -264,7 +267,7 @@ void chip8_emulate_cycle() {
             chip8.V[x] = kk;
             break;
         case 0x7000: /* 7xkk - ADD Vx, byte */
-            chip8.V[x] = chip8.V[x] + kk;
+            chip8.V[x] += kk;
             break;
         case 0x8000:
             switch (opcode & 0x000F) {
@@ -281,11 +284,11 @@ void chip8_emulate_cycle() {
                     chip8.V[x] ^= chip8.V[y];
                     break;
                 case 0x0004: /* 8xy4 - ADD Vx, Vy */
-                    chip8.V[0xF] = (chip8.V[x] + chip8.V[y] > 0xFF) ? 1 : 0;
+                    chip8.V[0xF] = (chip8.V[x] > 0xFF - chip8.V[y]) ? 1 : 0;
                     chip8.V[x] += chip8.V[y];
                     break;
                 case 0x0005: /* 8xy5 - SUB Vx, Vy */
-                    chip8.V[0xF] = (chip8.V[x] > chip8.V[y]) ? 1 : 0;
+                    chip8.V[0xF] = (chip8.V[x] < chip8.V[y]) ? 1 : 0;
                     chip8.V[x] -= chip8.V[y];
                     break;
                 case 0x0006: /* 8xy6 - SHR Vx {, Vy} */
@@ -293,11 +296,11 @@ void chip8_emulate_cycle() {
                     chip8.V[x] >>= 1;
                     break;
                 case 0x0007: /* 8xy7 - SUBN Vx, Vy */
-                    chip8.V[0xF] = (chip8.V[y] > chip8.V[x]) ? 1 : 0;
-                    chip8.V[x] = chip8.V[y] = chip8.V[x];
+                    chip8.V[0xF] = (chip8.V[y] < chip8.V[x]) ? 1 : 0;
+                    chip8.V[x] = chip8.V[y] - chip8.V[x];
                     break;
                 case 0x000E: /* 8xyE - SHL Vx {, Vy} */
-                    chip8.V[0xF] = chip8.V[x] & 0x80;
+                    chip8.V[0xF] = chip8.V[x] >> 7;
                     chip8.V[x] <<= 1;
                     break;
             }
@@ -313,28 +316,29 @@ void chip8_emulate_cycle() {
             chip8.pc -= 2;
             break;
         case 0xC000: /* Cxkk - RND Vx, byte */
-            chip8.V[x] = ((unsigned char)(rand() % 256)) & kk;
+            chip8.V[x] = ((unsigned char)(rand() % 0xFF)) & kk;
             break;
         case 0xD000: /* TODO Dxyn - DRW Vx, Vy, nibble */
-            printf("Drawing at %u, %u\n", chip8.V[x], chip8.V[y]);
-            printf("n: %d,\tI: %d\n", n, chip8.I);
+//           printf("Drawing at %u, %u\n", chip8.V[x], chip8.V[y]);
+//           printf("n: %d,\tI: %d\n", n, chip8.I);
+            chip8.V[0xF] = 0;
             for (dy = 0; dy < n; ++dy) {
                 for (dx = 0; dx < 8; ++dx) {
-                    printf("Set pixel: (x: %d, y: %d, on: %d)\n",
-                            (7 - dx) + chip8.V[x],
-                            dy + chip8.V[y],
-                            (chip8.memory[dy + chip8.I] >> dx) & 1);
+//                    printf("Set pixel: (x: %d, y: %d, on: %d)\n",
+//                            (7 - dx) + chip8.V[x],
+//                            dy + chip8.V[y],
+//                            (chip8.memory[dy + chip8.I] >> dx) & 1);
                     /* Update pixel and check collision */
                     if (graphics_set_pixel(
                             (7 - dx) + chip8.V[x],
                             dy + chip8.V[y],
                             (chip8.memory[dy + chip8.I] >> dx) & 1)) {
                         chip8.V[0xF] = 1;
-                    } else {
-                        chip8.V[0xF] = 0;
+//                        printf("Collide\n");
                     }
                 }
             }
+//            printf("Flag: %d\n", chip8.V[0xf]);
             break;
         case 0xE000:
             switch (opcode & 0x00FF) {
@@ -373,14 +377,16 @@ void chip8_emulate_cycle() {
                     chip8.memory[chip8.I + 2] = (chip8.V[x] % 100) % 10;
                     break;
                 case 0x0055: /* Fx55 - LD [I], Vx */
-                    for (i = 0; i < x; ++i) {
+                    for (i = 0; i <= x; ++i) {
                         chip8.memory[chip8.I + i] = chip8.V[i];
                     }
+                    chip8.I += x + 1;
                     break;
                 case 0x0065: /* Fx65 - LD Vx, [I] */
-                    for (i = 0; i < x; ++i) {
+                    for (i = 0; i <= x; ++i) {
                         chip8.V[i] = chip8.memory[chip8.I + i];
                     }
+                    chip8.I += x + 1;
                     break;
             }
             break;

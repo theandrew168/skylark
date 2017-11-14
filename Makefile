@@ -3,7 +3,7 @@ RM = rm -fr
 
 TARGET = skylark
 
-CFLAGS = -ansi -Wall -Werror -Wextra -pedantic-errors
+CFLAGS = -Wall -Wextra
 LDFLAGS = -lSDL2
 
 SRCS = $(wildcard src/*.c)
