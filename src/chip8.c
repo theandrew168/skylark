@@ -86,8 +86,7 @@ static unsigned char chip8_fontset[80] = {
 static chip8_t chip8;
 
 static void dump_registers() {
-    int i;
-    for (i = 0; i < REG_SIZE; ++i) {
+    for (int i = 0; i < REG_SIZE; ++i) {
         if (chip8.V[i] == 0) continue;
 
         printf("V[%d]:\t %d\n", i, chip8.V[i]);
@@ -97,8 +96,6 @@ static void dump_registers() {
 }
 
 static void reset_state() {
-    int i;
-
     memset(chip8.memory, 0, MEM_SIZE * sizeof(unsigned char));
     memset(chip8.V, 0, REG_SIZE * sizeof(unsigned char));
     
@@ -115,7 +112,7 @@ static void reset_state() {
     chip8.sound_timer = 0;
 
     /* Place fontset into chip8 memory */
-    for (i = 0; i < 80; ++i) {
+    for (int i = 0; i < 80; ++i) {
         chip8.memory[i] = chip8_fontset[i];
     }
 
@@ -124,8 +121,7 @@ static void reset_state() {
 }
 
 static int get_pressed_key() {
-    int i;
-    for (i = 0; i < KEY_SIZE; ++i) {
+    for (int i = 0; i < KEY_SIZE; ++i) {
         if (chip8.keys[i]) return i;
     }
 
@@ -193,6 +189,10 @@ bool chip8_load_rom(const char* rom) {
 
 static void pre_cycle() {
     input_update();
+    for (int i = 0; i < 16; ++i) {
+        chip8.keys[i] = input_is_key_down(i);
+    }
+
     graphics_clear_screen();
 }
 
@@ -227,6 +227,14 @@ void chip8_emulate_cycle() {
     n = opcode & 0x000F;
 
 //    printf("Opcode: %x\n", opcode);
+//    printf("%d, %d, %d\n", chip8.I, chip8.pc, chip8.sp);
+//    printf("%d, %d, %d, %d, %d, %d, %d, %d, ",
+//           chip8.V[0],chip8.V[1],chip8.V[2],chip8.V[3],
+//           chip8.V[4],chip8.V[5],chip8.V[6],chip8.V[7]);
+//    printf("%d, %d, %d, %d, %d, %d, %d, %d\n",
+//           chip8.V[8],chip8.V[9],chip8.V[10],chip8.V[11],
+//           chip8.V[12],chip8.V[13],chip8.V[14],chip8.V[15]);
+
 
     /* Decode instruction */
     switch (opcode & 0xF000) {
@@ -318,27 +326,22 @@ void chip8_emulate_cycle() {
         case 0xC000: /* Cxkk - RND Vx, byte */
             chip8.V[x] = ((unsigned char)(rand() % 0xFF)) & kk;
             break;
-        case 0xD000: /* TODO Dxyn - DRW Vx, Vy, nibble */
-//           printf("Drawing at %u, %u\n", chip8.V[x], chip8.V[y]);
-//           printf("n: %d,\tI: %d\n", n, chip8.I);
+        case 0xD000: /* Dxyn - DRW Vx, Vy, nibble */
             chip8.V[0xF] = 0;
             for (dy = 0; dy < n; ++dy) {
                 for (dx = 0; dx < 8; ++dx) {
-//                    printf("Set pixel: (x: %d, y: %d, on: %d)\n",
-//                            (7 - dx) + chip8.V[x],
-//                            dy + chip8.V[y],
-//                            (chip8.memory[dy + chip8.I] >> dx) & 1);
+                    unsigned short pixel = chip8.memory[chip8.I + dy];
+                    if (!(pixel & (0x80 >> dx))) continue;
+
                     /* Update pixel and check collision */
                     if (graphics_set_pixel(
-                            (7 - dx) + chip8.V[x],
-                            dy + chip8.V[y],
-                            (chip8.memory[dy + chip8.I] >> dx) & 1)) {
+                            //(7 - dx) + chip8.V[x],
+                            dx + chip8.V[x],
+                            dy + chip8.V[y], 1)) {
                         chip8.V[0xF] = 1;
-//                        printf("Collide\n");
                     }
                 }
             }
-//            printf("Flag: %d\n", chip8.V[0xf]);
             break;
         case 0xE000:
             switch (opcode & 0x00FF) {
@@ -356,6 +359,7 @@ void chip8_emulate_cycle() {
                     chip8.V[x] = chip8.delay_timer;
                     break;
                 case 0x000A: /* Fx0A - LD Vx, K */
+                    printf("wait for key\n");
                     if (get_pressed_key() < 0) return;
                     chip8.V[x] = (unsigned char)get_pressed_key();
                     break; 

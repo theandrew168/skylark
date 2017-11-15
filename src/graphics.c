@@ -56,21 +56,18 @@ void graphics_clear_screen() {
 }
 
 void graphics_clear_pixels() {
-    int i;
-    for (i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
+    for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
         screen.pixels[i] = false;
     }
 }
 
 void graphics_draw() {
-    int x, y;
     SDL_Rect pixel;
-
     pixel.w = screen.pixel_size;
     pixel.h = screen.pixel_size;
 
-    for (y = 0; y < SCREEN_HEIGHT; y++) {
-        for (x = 0; x < SCREEN_WIDTH; x++) {
+    for (int y = 0; y < SCREEN_HEIGHT; y++) {
+        for (int x = 0; x < SCREEN_WIDTH; x++) {
             pixel.x = x * screen.pixel_size;
             pixel.y = y * screen.pixel_size;
 
@@ -96,11 +93,6 @@ void graphics_set_pixel_color(unsigned char r, unsigned char g, unsigned char b)
 
 bool graphics_set_pixel(int x, int y, bool on) {
     bool collision = false;
-
-    /* Check if pixel is being erased */
-    if (screen.pixels[x + y * SCREEN_WIDTH] && !on) {
-        collision = true;
-    }
     
     /* Manually XOR the pixels*/
     if ((screen.pixels[x + y * SCREEN_WIDTH] && !on) ||
@@ -108,6 +100,7 @@ bool graphics_set_pixel(int x, int y, bool on) {
         screen.pixels[x + y * SCREEN_WIDTH] = true;
     } else {
         screen.pixels[x + y * SCREEN_WIDTH] = false;
+        collision = true;
     }
 
     return collision;

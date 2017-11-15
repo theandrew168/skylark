@@ -38,9 +38,6 @@ void input_init() {
 }   
 
 void input_update() {
-    int i;
-    memset(input.keys, 0, NUM_KEYS);
-
     /* Poll events from window */
     while (SDL_PollEvent(&event)) {
         /* Check for closing the window */
@@ -57,9 +54,11 @@ void input_update() {
                 return;
             }
 
-            for (i = 0; i < NUM_KEYS; i++) {
+            for (int i = 0; i < NUM_KEYS; i++) {
                 if (key == gamepad[i]) {
                     input.keys[i] = true;
+                } else {
+                    input.keys[i] = false;
                 }
             }
         }

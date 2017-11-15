@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include "chip8.h"
 #include "input.h"
 
@@ -24,13 +25,16 @@ int main(int argc, char** argv) {
 
     /* Loop until game ends */
     while (chip8_running()) {
+        input_update();
         chip8_emulate_cycle();
 
         /* Step the emulator with 'z' */
-        while(STEP && !input_is_key_down(12)) {
+        while (STEP && !input_is_key_down(12)) {
             input_update();
             if (input_close_requested()) break;
         }
+
+        usleep(2 * 1000);
     }
 
     chip8_terminate();
