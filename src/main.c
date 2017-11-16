@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
             if (input_close_requested()) break;
         }
 
-        usleep(2 * 1000);
+        usleep(1 * 1000);
     }
 
     chip8_terminate();

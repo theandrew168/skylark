@@ -204,7 +204,7 @@ static void post_cycle() {
     }
         
     if (chip8.sound_timer > 0) {
-        printf("BEEP\n");
+//        printf("BEEP\n");
         --chip8.sound_timer;
     }
 }
@@ -359,7 +359,6 @@ void chip8_emulate_cycle() {
                     chip8.V[x] = chip8.delay_timer;
                     break;
                 case 0x000A: /* Fx0A - LD Vx, K */
-                    printf("wait for key\n");
                     if (get_pressed_key() < 0) return;
                     chip8.V[x] = (unsigned char)get_pressed_key();
                     break; 
