@@ -1,31 +1,38 @@
 # skylark
-This is a Chip8 emulator written in ANSI C that utilizes SDL2 for graphics.
+This is a cross-platform [CHIP-8](https://wikipedia.org/CHIP-8) emulator written in C99.
 
-## Building on Linux
-First ensure that the SDL2 library is installed.  
-On Ubuntu 16.04:
-```bash
-sudo apt install libsdl2-dev
-```
-Then, clone this repository to get the source code:
-```bash
-git clone https://github.com/theandrew168/skylark.git
-```
-Now, build the project using `make`.
-```bash
-make -j4    # or -jN, for whatever is appropriate for your system
-```
-Once built, skylark can be ran via:
-```bash
-./skylark <rom_file>    # where <rom_file> is the game you want to play
-```
-
-## Directories
-`roms/` - Chip8 games used for playing / testing the emulator  
-`src/` - Emulator source code  
-
-## Libraries
+## Dependencies
 [SDL2](https://www.libsdl.org/index.php) (zlib) - Window creation / basic rendering  
+
+## Building
+This project is built using POSIX-compatible [make](https://pubs.opengroup.org/onlinepubs/009695399/utilities/make.html).
+For unix-like systems, it can be built natively.
+For Windows builds, [mingw-w64](http://mingw-w64.org/doku.php) is used to cross-compile the project from a unix-like system.
+
+### Linux (Native, Debian-based)
+```
+sudo apt install libsdl2-dev
+make
+```
+
+### macOS (Native)
+```
+brew install sdl2
+make -f Makefile.macos
+```
+
+### Windows (Cross-Compile)
+From Linux (Debian-based, for example):
+```
+sudo apt install mingw-w64 wget
+make -f Makefile.mingw
+```
+
+From macOS:
+```
+brew install mingw-w64 wget
+make -f Makefile.mingw
+```
 
 ## References
 [Emulator Tutorial](http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/)  
