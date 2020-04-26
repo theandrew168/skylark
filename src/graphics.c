@@ -1,8 +1,9 @@
-#include "graphics.h"
+#include <stdbool.h>
+#include <stdio.h>
 
 #include <SDL2/SDL.h>
-#include <stdio.h>
-#include "types.h"
+
+#include "graphics.h"
 
 typedef struct screen_t {
     SDL_Window* window;

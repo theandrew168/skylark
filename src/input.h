@@ -1,8 +1,9 @@
 #ifndef SKYLARK_INPUT_H
 #define SKYLARK_INPUT_H
 
+#include <stdbool.h>
+
 #include <SDL2/SDL.h>
-#include "types.h"
 
 #define NUM_KEYS 16
 

@@ -1,8 +1,9 @@
 #ifndef SKYLARK_GRAPHICS_H
 #define SKYLARK_GRAPHICS_H
 
+#include <stdbool.h>
+
 #include <SDL2/SDL.h>
-#include "types.h"
 
 #define SCREEN_WIDTH 64
 #define SCREEN_HEIGHT 32

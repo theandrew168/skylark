@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include <unistd.h>
+#include <time.h>
+
 #include "chip8.h"
 #include "input.h"
 
@@ -34,7 +35,10 @@ int main(int argc, char** argv) {
             if (input_close_requested()) break;
         }
 
-        usleep(1 * 1000);
+        const struct timespec delay = {
+            .tv_nsec = 1000000,
+        };
+        nanosleep(&delay, NULL);
     }
 
     chip8_terminate();

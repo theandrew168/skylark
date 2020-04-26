@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include "types.h"
 #include "graphics.h"
 #include "input.h"
 

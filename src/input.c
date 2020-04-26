@@ -1,9 +1,10 @@
-#include "input.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 
 #include <SDL2/SDL.h>
-#include <string.h>
-#include <stdio.h>
-#include "types.h"
+
+#include "input.h"
 
 static SDL_Keycode gamepad[NUM_KEYS] = {
     SDLK_1,
