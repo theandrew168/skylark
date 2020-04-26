@@ -1,5 +1,5 @@
 # skylark
-This is a cross-platform [CHIP-8](https://wikipedia.org/CHIP-8) emulator written in C99.
+This is a cross-platform [CHIP-8](https://en.wikipedia.org/wiki/CHIP-8) emulator written in C99.
 
 ## Dependencies
 [SDL2](https://www.libsdl.org/index.php) (zlib) - Window creation / basic rendering  
@@ -22,7 +22,7 @@ make -f Makefile.macos
 ```
 
 ### Windows (Cross-Compile)
-From Linux (Debian-based, for example):
+From Linux (Debian-based):
 ```
 sudo apt install mingw-w64 wget
 make -f Makefile.mingw
