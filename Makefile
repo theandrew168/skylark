@@ -26,13 +26,17 @@ all: $(MAIN_BINARY) $(TEST_BINARY) $(STATIC_LIBRARY) $(SHARED_LIBRARY)
 sources =         \
   src/chip8.c     \
   src/graphics.c  \
-  src/input.c
+  src/input.c     \
+  src/isa.c
 objects = $(sources:.c=.o)
 test_sources =       \
-  tests/test_opcode.c
+  tests/test_isa.c
 
 # Declare dependencies between project files
-src/file.o: src/file.c src/file.h
+src/chip8.o: src/chip8.c src/chip8.h
+src/graphics.o: src/graphics.c src/graphics.h
+src/input.o: src/input.c src/input.h
+src/isa.o: src/isa.c src/isa.h
 
 # Declare rules for each build target
 $(MAIN_BINARY): src/main.c $(STATIC_LIBRARY)

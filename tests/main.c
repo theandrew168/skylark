@@ -1,14 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "minunit.h"
 
-#include "test_opcode.c"
+#include "test_isa.c"
 
 int tests_run = 0;
 
 const char*
 test_all(void)
 {
-    mu_run_test_suite(test_opcode);
+    mu_run_test_suite(test_isa);
     return NULL;
 }
 
