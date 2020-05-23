@@ -43,7 +43,7 @@ enum opcode {
 };
 
 struct instruction {
-    enum opcode opcode;
+    int opcode;
     uint16_t nnn;
     uint8_t n;
     uint8_t x;
