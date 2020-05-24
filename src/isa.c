@@ -46,6 +46,46 @@ static const struct {
     [OP_COUNT]     = { 0, 0 },
 };
 
+static const char* OP_NAMES[] = {
+    [OP_UNDEFINED] = "OP_UNDEFINED",
+    [OP_CLS_00E0]  = "OP_TODO", 
+    [OP_RET_00EE]  = "OP_TODO", 
+    [OP_SYS_0nnn]  = "OP_TODO", 
+    [OP_JP_1nnn]   = "OP_TODO", 
+    [OP_CALL_2nnn] = "OP_TODO", 
+    [OP_SE_3xkk]   = "OP_TODO", 
+    [OP_SNE_4xkk]  = "OP_TODO", 
+    [OP_SE_5xy0]   = "OP_TODO", 
+    [OP_LD_6xkk]   = "OP_TODO", 
+    [OP_ADD_7xkk]  = "OP_TODO", 
+    [OP_LD_8xy0]   = "OP_TODO", 
+    [OP_OR_8xy1]   = "OP_TODO", 
+    [OP_AND_8xy2]  = "OP_TODO", 
+    [OP_XOR_8xy3]  = "OP_TODO", 
+    [OP_ADD_8xy4]  = "OP_TODO", 
+    [OP_SUB_8xy5]  = "OP_TODO", 
+    [OP_SHR_8xy6]  = "OP_TODO", 
+    [OP_SUBN_8xy7] = "OP_TODO", 
+    [OP_SHL_8xyE]  = "OP_TODO", 
+    [OP_SNE_9xy0]  = "OP_TODO", 
+    [OP_LD_Annn]   = "OP_TODO", 
+    [OP_JP_Bnnn]   = "OP_TODO", 
+    [OP_RND_Cxkk]  = "OP_TODO", 
+    [OP_DRW_Dxyn]  = "OP_TODO", 
+    [OP_SKP_Ex9E]  = "OP_TODO", 
+    [OP_SKNP_ExA1] = "OP_TODO", 
+    [OP_LD_Fx07]   = "OP_TODO", 
+    [OP_LD_Fx0A]   = "OP_TODO", 
+    [OP_LD_Fx15]   = "OP_TODO", 
+    [OP_LD_Fx18]   = "OP_TODO", 
+    [OP_ADD_Fx1E]  = "OP_TODO", 
+    [OP_LD_Fx29]   = "OP_TODO", 
+    [OP_LD_Fx33]   = "OP_TODO", 
+    [OP_LD_Fx55]   = "OP_TODO", 
+    [OP_LD_Fx65]   = "OP_TODO", 
+    [OP_COUNT]     = "OP_COUNT", 
+};
+
 int
 isa_decode(uint16_t code, struct instruction* inst)
 {
@@ -78,6 +118,6 @@ isa_print(const struct instruction* inst)
         return;
     }
 
-    const char fmt[] = "op: %02d\tnnn: 0x%02x\tn: 0x%02x\tx: 0x%02x\ty: 0x%02x\tkk: 0x%02x";
-    printf(fmt, inst->opcode, inst->nnn, inst->n, inst->x, inst->y, inst->kk);
+    const char fmt[] = "op: %s\tnnn: 0x%04x n: 0x%02x x: 0x%02x y: 0x%02x kk: 0x%02x\n";
+    printf(fmt, OP_NAMES[inst->opcode], inst->nnn, inst->n, inst->x, inst->y, inst->kk);
 }
