@@ -48,7 +48,7 @@ libskylark.so: $(libskylark_objects)
 
 # Build the main binary
 skylark: src/main.c libskylark.a rom2c
-	@echo "BINARY  $@"
+	@echo "EXE     $@"
 	@$(CC) $(CFLAGS) -o $@ src/main.c libskylark.a $(LDFLAGS) $(LDLIBS)
 
 
@@ -57,19 +57,19 @@ skylark_tests_sources =  \
   tests/test_isa.c
 
 skylark_tests: $(skylark_tests_sources) tests/main.c libskylark.a
-	@echo "BINARY  $@"
+	@echo "EXE     $@"
 	@$(CC) $(CFLAGS) -o $@ tests/main.c libskylark.a $(LDFLAGS) $(LDLIBS)
 
 
 # Build the disassembler
 dis: tools/dis.c libskylark.a
-	@echo "BINARY  $@"
+	@echo "EXE     $@"
 	@$(CC) $(CFLAGS) -o $@ tools/dis.c libskylark.a $(LDFLAGS) $(LDLIBS)
 
 
 # Build the ROM to C conversion tool
 rom2c: tools/rom2c.c
-	@echo "BINARY  $@"
+	@echo "EXE     $@"
 	@$(CC) $(CFLAGS) -o $@ tools/rom2c.c $(LDFLAGS) $(LDLIBS)
 
 
