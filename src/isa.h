@@ -40,6 +40,7 @@ enum opcode {
     OP_LD_Fx33,
     OP_LD_Fx55,
     OP_LD_Fx65,
+    OP_COUNT,
 };
 
 struct instruction {
