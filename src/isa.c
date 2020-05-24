@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 
 #include "isa.h"
 
@@ -67,4 +68,16 @@ isa_decode(uint16_t code, struct instruction* inst)
 
     // if nothing matched from the above loop then the code is invalid
     return ISA_ERROR;
+}
+
+void
+isa_print(const struct instruction* inst)
+{
+    if (inst->opcode <= OP_UNDEFINED || inst->opcode >= OP_COUNT) {
+        printf("???\n");
+        return;
+    }
+
+    const char fmt[] = "op: %02d\tnnn: 0x%02x\tn: 0x%02x\tx: 0x%02x\ty: 0x%02x\tkk: 0x%02x";
+    printf(fmt, inst->opcode, inst->nnn, inst->n, inst->x, inst->y, inst->kk);
 }

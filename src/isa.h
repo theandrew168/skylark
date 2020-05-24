@@ -58,5 +58,6 @@ enum isa_status {
 };
 
 int isa_decode(uint16_t code, struct instruction* inst);
+void isa_print(const struct instruction* inst);
 
 #endif

@@ -1,6 +1,7 @@
-# Request POSIX make behavior and disable any default suffix-based rules
+# Request POSIX Make behavior and disable any default suffix-based rules
 .POSIX:
 .SUFFIXES:
+
 
 # Declare compiler tools and flags
 AR      = ar
@@ -13,62 +14,83 @@ CFLAGS += -Isrc/
 LDFLAGS =
 LDLIBS  = -lSDL2
 
-# Declare names for build targets: main binary, test binary, static library, shared library
-MAIN_BINARY    = skylark
-TEST_BINARY    = skylark_tests
-STATIC_LIBRARY = libskylark.a
-SHARED_LIBRARY = libskylark.so
 
 # Declare which targets should be built by default
-all: $(MAIN_BINARY) $(TEST_BINARY) $(STATIC_LIBRARY) $(SHARED_LIBRARY)
+all: libskylark.a libskylark.so skylark skylark_tests dis rom2c
 
-# Declare sources, objects, and test sources
-sources =         \
-  src/chip8.c     \
-  src/graphics.c  \
-  src/input.c     \
+
+# Declare static / shared library sources
+libskylark_sources =  \
+  src/chip8.c         \
+  src/file.c          \
+  src/graphics.c      \
+  src/input.c         \
   src/isa.c
-objects = $(sources:.c=.o)
-test_sources =       \
-  tests/test_isa.c
+libskylark_objects = $(libskylark_sources:.c=.o)
 
-# Declare dependencies between project files
+# Express dependencies between object and source files
 src/chip8.o: src/chip8.c src/chip8.h
+src/file.o: src/file.c src/file.h
 src/graphics.o: src/graphics.c src/graphics.h
 src/input.o: src/input.c src/input.h
 src/isa.o: src/isa.c src/isa.h
 
-# Declare rules for each build target
-$(MAIN_BINARY): src/main.c $(STATIC_LIBRARY)
-	@echo "BINARY  $@"
-	@$(CC) $(CFLAGS) -o $@ src/main.c $(STATIC_LIBRARY) $(LDFLAGS) $(LDLIBS)
-$(TEST_BINARY): $(test_sources) tests/main.c $(STATIC_LIBRARY)
-	@echo "BINARY  $@"
-	@$(CC) $(CFLAGS) -o $@ tests/main.c $(STATIC_LIBRARY) $(LDFLAGS) $(LDLIBS)
-$(STATIC_LIBRARY): $(objects)
+# Build the static library
+libskylark.a: $(libskylark_objects)
 	@echo "STATIC  $@"
-	@$(AR) rcs $@ $(objects)
-$(SHARED_LIBRARY): $(objects)
+	@$(AR) rcs $@ $(libskylark_objects)
+
+# Build the shared library
+libskylark.so: $(libskylark_objects)
 	@echo "SHARED  $@"
-	@$(CC) -shared -o $@ $(objects) $(LDFLAGS) $(LDLIBS)
+	@$(CC) -shared -o $@ $(libskylark_objects) $(LDFLAGS) $(LDLIBS)
+
+
+# Build the main binary
+skylark: src/main.c libskylark.a rom2c
+	@echo "BINARY  $@"
+	@$(CC) $(CFLAGS) -o $@ src/main.c libskylark.a $(LDFLAGS) $(LDLIBS)
+
+
+# Build the tests binary
+skylark_tests_sources =  \
+  tests/test_isa.c
+
+skylark_tests: $(skylark_tests_sources) tests/main.c libskylark.a
+	@echo "BINARY  $@"
+	@$(CC) $(CFLAGS) -o $@ tests/main.c libskylark.a $(LDFLAGS) $(LDLIBS)
+
+
+# Build the disassembler
+dis: tools/dis.c libskylark.a
+	@echo "BINARY  $@"
+	@$(CC) $(CFLAGS) -o $@ tools/dis.c libskylark.a $(LDFLAGS) $(LDLIBS)
+
+
+# Build the ROM to C conversion tool
+rom2c: tools/rom2c.c
+	@echo "BINARY  $@"
+	@$(CC) $(CFLAGS) -o $@ tools/rom2c.c $(LDFLAGS) $(LDLIBS)
+
+
+# Helper target that builds and runs the main binary
+.PHONY: run
+run: skylark
+	./skylark
+
+# Helper target that builds and runs the test binary
+.PHONY: check
+check: skylark_tests
+	./skylark_tests
+
+# Helper target that cleans up build artifacts
+.PHONY: clean
+clean:
+	rm -f libskylark.a libskylark.so skylark skylark_tests dis rom2c $(libskylark_objects)
+
 
 # Default rule for compiling .c files to .o object files
 .SUFFIXES: .c .o
 .c.o:
 	@echo "CC      $@"
 	@$(CC) $(CFLAGS) -c -o $@ $<
-
-# Helper target that builds and runs the main binary
-.PHONY: run
-run: $(MAIN_BINARY)
-	./$(MAIN_BINARY)
-
-# Helper target that builds and runs the test binary
-.PHONY: check
-check: $(TEST_BINARY)
-	./$(TEST_BINARY)
-
-# Helper target that cleans up build artifacts
-.PHONY: clean
-clean:
-	rm -f $(MAIN_BINARY) $(TEST_BINARY) $(STATIC_LIBRARY) $(SHARED_LIBRARY) $(objects)

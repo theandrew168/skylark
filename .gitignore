@@ -1,5 +1,7 @@
 skylark
 skylark_tests
+dis
+rom2c
 
 # Prerequisites
 *.d
