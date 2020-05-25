@@ -6,7 +6,7 @@
 static const struct {
     uint16_t mask;
     uint16_t value;
-} OP_MASK_VALUES[] = {
+} INSTRUCTION_MASKS[] = {
     [OP_UNDEFINED] = { 0, 0 },
     [OP_CLS_00E0]  = { 0xffff, 0x00E0 },
     [OP_RET_00EE]  = { 0xffff, 0x00EE },
@@ -43,51 +43,49 @@ static const struct {
     [OP_LD_Fx33]   = { 0xf0ff, 0xF033 },
     [OP_LD_Fx55]   = { 0xf0ff, 0xF055 },
     [OP_LD_Fx65]   = { 0xf0ff, 0xF065 },
-    [OP_COUNT]     = { 0, 0 },
 };
 
-static const char* OP_NAMES[] = {
+static const char* INSTRUCTION_NAMES[] = {
     [OP_UNDEFINED] = "OP_UNDEFINED",
-    [OP_CLS_00E0]  = "OP_TODO", 
-    [OP_RET_00EE]  = "OP_TODO", 
-    [OP_SYS_0nnn]  = "OP_TODO", 
-    [OP_JP_1nnn]   = "OP_TODO", 
-    [OP_CALL_2nnn] = "OP_TODO", 
-    [OP_SE_3xkk]   = "OP_TODO", 
-    [OP_SNE_4xkk]  = "OP_TODO", 
-    [OP_SE_5xy0]   = "OP_TODO", 
-    [OP_LD_6xkk]   = "OP_TODO", 
-    [OP_ADD_7xkk]  = "OP_TODO", 
-    [OP_LD_8xy0]   = "OP_TODO", 
-    [OP_OR_8xy1]   = "OP_TODO", 
-    [OP_AND_8xy2]  = "OP_TODO", 
-    [OP_XOR_8xy3]  = "OP_TODO", 
-    [OP_ADD_8xy4]  = "OP_TODO", 
-    [OP_SUB_8xy5]  = "OP_TODO", 
-    [OP_SHR_8xy6]  = "OP_TODO", 
-    [OP_SUBN_8xy7] = "OP_TODO", 
-    [OP_SHL_8xyE]  = "OP_TODO", 
-    [OP_SNE_9xy0]  = "OP_TODO", 
-    [OP_LD_Annn]   = "OP_TODO", 
-    [OP_JP_Bnnn]   = "OP_TODO", 
-    [OP_RND_Cxkk]  = "OP_TODO", 
-    [OP_DRW_Dxyn]  = "OP_TODO", 
-    [OP_SKP_Ex9E]  = "OP_TODO", 
-    [OP_SKNP_ExA1] = "OP_TODO", 
-    [OP_LD_Fx07]   = "OP_TODO", 
-    [OP_LD_Fx0A]   = "OP_TODO", 
-    [OP_LD_Fx15]   = "OP_TODO", 
-    [OP_LD_Fx18]   = "OP_TODO", 
-    [OP_ADD_Fx1E]  = "OP_TODO", 
-    [OP_LD_Fx29]   = "OP_TODO", 
-    [OP_LD_Fx33]   = "OP_TODO", 
-    [OP_LD_Fx55]   = "OP_TODO", 
-    [OP_LD_Fx65]   = "OP_TODO", 
-    [OP_COUNT]     = "OP_COUNT", 
+    [OP_CLS_00E0]  = "OP_CLS_00E0", 
+    [OP_RET_00EE]  = "OP_RET_00EE", 
+    [OP_SYS_0nnn]  = "OP_SYS_0nnn", 
+    [OP_JP_1nnn]   = "OP_JP_1nnn", 
+    [OP_CALL_2nnn] = "OP_CALL_2nnn", 
+    [OP_SE_3xkk]   = "OP_SE_3xkk", 
+    [OP_SNE_4xkk]  = "OP_SNE_4xkk", 
+    [OP_SE_5xy0]   = "OP_SE_5xy0", 
+    [OP_LD_6xkk]   = "OP_LD_6xkk", 
+    [OP_ADD_7xkk]  = "OP_ADD_7xkk", 
+    [OP_LD_8xy0]   = "OP_LD_8xy0", 
+    [OP_OR_8xy1]   = "OP_OR_8xy1", 
+    [OP_AND_8xy2]  = "OP_AND_8xy2", 
+    [OP_XOR_8xy3]  = "OP_XOR_8xy3", 
+    [OP_ADD_8xy4]  = "OP_ADD_8xy4", 
+    [OP_SUB_8xy5]  = "OP_SUB_8xy5", 
+    [OP_SHR_8xy6]  = "OP_SHR_8xy6", 
+    [OP_SUBN_8xy7] = "OP_SUBN_8xy7", 
+    [OP_SHL_8xyE]  = "OP_SHL_8xyE", 
+    [OP_SNE_9xy0]  = "OP_SNE_9xy0", 
+    [OP_LD_Annn]   = "OP_LD_Annn", 
+    [OP_JP_Bnnn]   = "OP_JP_Bnnn", 
+    [OP_RND_Cxkk]  = "OP_RND_Cxkk", 
+    [OP_DRW_Dxyn]  = "OP_DRW_Dxyn", 
+    [OP_SKP_Ex9E]  = "OP_SKP_Ex9E", 
+    [OP_SKNP_ExA1] = "OP_SKNP_ExA1", 
+    [OP_LD_Fx07]   = "OP_LD_Fx07", 
+    [OP_LD_Fx0A]   = "OP_LD_Fx0A", 
+    [OP_LD_Fx15]   = "OP_LD_Fx15", 
+    [OP_LD_Fx18]   = "OP_LD_Fx18", 
+    [OP_ADD_Fx1E]  = "OP_ADD_Fx1E", 
+    [OP_LD_Fx29]   = "OP_LD_Fx29", 
+    [OP_LD_Fx33]   = "OP_LD_Fx33", 
+    [OP_LD_Fx55]   = "OP_LD_Fx55", 
+    [OP_LD_Fx65]   = "OP_LD_Fx65", 
 };
 
 int
-isa_decode(uint16_t code, struct instruction* inst)
+isa_instruction_decode(uint16_t code, struct instruction* inst)
 {
     // params can be set now since their position is consistent
     inst->opcode = OP_UNDEFINED;
@@ -100,7 +98,7 @@ isa_decode(uint16_t code, struct instruction* inst)
     // loop through each opcode and try to find a match
     for (int op = OP_UNDEFINED + 1; op < OP_COUNT; op++) {
         // check for a match by masking the code and comparing the values
-        if ((code & OP_MASK_VALUES[op].mask) == OP_MASK_VALUES[op].value) {
+        if ((code & INSTRUCTION_MASKS[op].mask) == INSTRUCTION_MASKS[op].value) {
             inst->opcode = op;
             return ISA_OK;
         }
@@ -110,14 +108,12 @@ isa_decode(uint16_t code, struct instruction* inst)
     return ISA_ERROR;
 }
 
-void
-isa_print(const struct instruction* inst)
+const char*
+isa_instruction_name(const struct instruction* inst)
 {
     if (inst->opcode <= OP_UNDEFINED || inst->opcode >= OP_COUNT) {
-        printf("???\n");
-        return;
+        return INSTRUCTION_NAMES[OP_UNDEFINED];
     }
 
-    const char fmt[] = "op: %s\tnnn: 0x%04x n: 0x%02x x: 0x%02x y: 0x%02x kk: 0x%02x\n";
-    printf(fmt, OP_NAMES[inst->opcode], inst->nnn, inst->n, inst->x, inst->y, inst->kk);
+    return INSTRUCTION_NAMES[inst->opcode];
 }

@@ -54,11 +54,11 @@ skylark: src/main.c libskylark.a rom2c
 
 # Build the tests binary
 skylark_tests_sources =  \
-  tests/test_isa.c
+  src/isa_test.c
 
-skylark_tests: $(skylark_tests_sources) tests/main.c libskylark.a
+skylark_tests: $(skylark_tests_sources) src/main_test.c libskylark.a
 	@echo "EXE     $@"
-	@$(CC) $(CFLAGS) -o $@ tests/main.c libskylark.a $(LDFLAGS) $(LDLIBS)
+	@$(CC) $(CFLAGS) -o $@ src/main_test.c libskylark.a $(LDFLAGS) $(LDLIBS)
 
 
 # Build the disassembler
