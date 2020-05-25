@@ -85,7 +85,7 @@ static const char* INSTRUCTION_NAMES[] = {
 };
 
 int
-isa_instruction_decode(uint16_t code, struct instruction* inst)
+isa_instruction_decode(struct instruction* inst, uint16_t code)
 {
     // params can be set now since their position is consistent
     inst->opcode = OP_UNDEFINED;

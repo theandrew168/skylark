@@ -2,13 +2,42 @@
 #define SKYLARK_CHIP8_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
-#include "graphics.h"
+enum {
+    CHIP8_MEM_SIZE = 4096,
+    CHIP8_REG_SIZE = 16,
+    CHIP8_STACK_SIZE = 16,
+    CHIP8_INPUT_SIZE = 16,
+    CHIP8_DISPLAY_WIDTH = 64,
+    CHIP8_DISPLAY_HEIGHT = 32,
 
-bool chip8_init();
-void chip8_terminate();
-bool chip8_running();
-bool chip8_load_rom(const char* rom);
-void chip8_emulate_cycle();
+    CHIP8_ROM_OFFSET = 512,
+};
+
+enum {
+    CHIP8_OK = 0,
+    CHIP8_ERROR,
+};
+
+struct chip8 {
+    uint8_t mem[CHIP8_MEM_SIZE];
+    uint8_t reg[CHIP8_REG_SIZE];
+
+    uint16_t index;
+    uint16_t pc;
+
+    uint16_t stack[CHIP8_STACK_SIZE];
+    uint16_t sp;
+
+    bool input[CHIP8_INPUT_SIZE];
+    bool display[CHIP8_DISPLAY_WIDTH * CHIP8_DISPLAY_HEIGHT];
+
+    uint8_t timer_delay;
+    uint8_t timer_sound;
+};
+
+int chip8_init(struct chip8* chip8, const uint8_t* rom, long size);
+int chip8_step(struct chip8* chip8);
 
 #endif

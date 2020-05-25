@@ -1,47 +1,65 @@
+#include <stdint.h>
 #include <stdio.h>
-#include <time.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "chip8.h"
-#include "input.h"
 
-#define STEP 0
-
-int main(int argc, char** argv) {
-
-    /* Ensure a ROM was passed to skylark */
+int
+main(int argc, char* argv[])
+{
     if (argc != 2) {
-        printf("Usage: %s <rom_file>\n", argv[0]);
-        return 1;
+        fprintf(stderr, "usage: %s <rom_file>\n", argv[0]);
+        return EXIT_FAILURE;
     }
 
-    /* Initialize emulator */
-    if (!chip8_init()) {
-        return 1;
+    FILE* fp = fopen(argv[1], "r");
+    if (fp == NULL) {
+        fprintf(stderr, "failed to open rom: %s\n", argv[1]);
+        return EXIT_FAILURE;
     }
 
-    /* Load ROM into emulator */
-    if (!chip8_load_rom(argv[1])) {
-        return 1;
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    uint8_t* buf = malloc(size);
+    if (buf == NULL) {
+        fclose(fp);
+        fprintf(stderr, "failed to allocate buffer to hold ROM contents\n");
+        return EXIT_FAILURE;
     }
 
-    /* Loop until game ends */
-    while (chip8_running()) {
-        input_update();
-        chip8_emulate_cycle();
+    long count = fread(buf, 1, size, fp);
+    if (count != size) {
+        free(buf);
+        fclose(fp);
+        fprintf(stderr, "failed to read ROM into buffer\n");
+        return EXIT_FAILURE;
+    }
+    fclose(fp);
 
-        /* Step the emulator with 'z' */
-        while (STEP && !input_is_key_down(12)) {
-            input_update();
-            if (input_close_requested()) break;
+    struct chip8 chip8 = { 0 };
+    int rc = chip8_init(&chip8, buf, size);
+    if (rc != CHIP8_OK) {
+        free(buf);
+        fprintf(stderr, "failed to init chip8 emulator\n");
+        return EXIT_FAILURE;
+    }
+    free(buf);
+
+    bool running = true;
+    while (running) {
+        // TODO input
+
+        rc = chip8_step(&chip8);
+        if (rc != CHIP8_OK) {
+            running = false;
         }
 
-        const struct timespec delay = {
-            .tv_nsec = 1000000,
-        };
-        nanosleep(&delay, NULL);
+        // TODO graphics
+        // TODO sound?
     }
 
-    chip8_terminate();
-
-    return 0;
+    return EXIT_SUCCESS;
 }

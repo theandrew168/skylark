@@ -57,7 +57,7 @@ enum isa_status {
     ISA_ERROR,
 };
 
-int isa_instruction_decode(uint16_t code, struct instruction* inst);
+int isa_instruction_decode(struct instruction* inst, uint16_t code);
 const char* isa_instruction_name(const struct instruction* inst);
 
 #endif

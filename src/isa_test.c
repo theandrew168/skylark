@@ -20,7 +20,7 @@ test_isa_instruction_decode(void)
 
     struct instruction inst = { 0 };
     for (long i = 0; i < num_tests; i++) {
-        int rc = isa_instruction_decode(tests[i].code, &inst);
+        int rc = isa_instruction_decode(&inst, tests[i].code);
         if (rc != ISA_OK) {
             fprintf(stderr, "failed to decode instruction: %04x", tests[i].code);
             return false;

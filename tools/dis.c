@@ -56,7 +56,7 @@ main(int argc, char* argv[])
     struct instruction inst = { 0 };
     for (long i = 0; i < size; i += 2) {
         printf("0x%04lx | ", i);
-        uint16_t code = buf[i] << 8 | buf[i + 2];
+        uint16_t code = buf[i] << 8 | buf[i + 1];
         isa_instruction_decode(code, &inst);
         printf("TODO\n");
     }
