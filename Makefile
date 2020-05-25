@@ -16,6 +16,7 @@ LDLIBS  = -lSDL2
 
 
 # Declare which targets should be built by default
+default: skylark skylark_tests
 all: libskylark.a libskylark.so skylark skylark_tests dis rom2c
 
 

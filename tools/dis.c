@@ -16,6 +16,8 @@
 // which sections of the memory get executed as instructions. Then,
 // I can iterate back through and print the instructions and data.
 // Both sides of every branch will need to be explored.
+//
+// TODO: Make a blog post about this.
 
 int
 main(int argc, char* argv[])

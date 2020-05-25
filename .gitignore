@@ -3,6 +3,9 @@ skylark_tests
 dis
 rom2c
 
+# Vim swap files
+*.swp
+
 # Prerequisites
 *.d
 
