@@ -11,8 +11,6 @@ enum {
     CHIP8_INPUT_SIZE = 16,
     CHIP8_DISPLAY_WIDTH = 64,
     CHIP8_DISPLAY_HEIGHT = 32,
-
-    CHIP8_ROM_OFFSET = 512,
 };
 
 enum {

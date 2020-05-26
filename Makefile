@@ -27,7 +27,7 @@ libskylark_sources =  \
 libskylark_objects = $(libskylark_sources:.c=.o)
 
 # Express dependencies between object and source files
-src/chip8.o: src/chip8.c src/chip8.h
+src/chip8.o: src/chip8.c src/chip8.h src/isa.h
 src/isa.o: src/isa.c src/isa.h
 
 # Build the static library

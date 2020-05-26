@@ -58,6 +58,11 @@ main(int argc, char* argv[])
         }
 
         // TODO graphics
+        for (long i = 0; i < CHIP8_DISPLAY_WIDTH * CHIP8_DISPLAY_HEIGHT; i++) {
+            printf("%s", chip8.display[i] ? "XX" : "  ");
+            if (i % CHIP8_DISPLAY_WIDTH == CHIP8_DISPLAY_WIDTH - 1) printf("\n");
+        }
+
         // TODO sound?
     }
 
