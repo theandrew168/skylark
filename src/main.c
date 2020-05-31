@@ -40,7 +40,9 @@ main(int argc, char* argv[])
     fclose(fp);
 
     struct chip8 chip8 = { 0 };
-    int rc = chip8_init(&chip8, buf, size);
+    chip8_init(&chip8);
+
+    int rc = chip8_load(&chip8, buf, size);
     if (rc != CHIP8_OK) {
         free(buf);
         fprintf(stderr, "failed to init chip8 emulator\n");
@@ -54,7 +56,9 @@ main(int argc, char* argv[])
 
         rc = chip8_step(&chip8);
         if (rc != CHIP8_OK) {
+            fprintf(stderr, "error: %s\n", chip8_error_message(rc));
             running = false;
+            break;
         }
 
         // TODO graphics

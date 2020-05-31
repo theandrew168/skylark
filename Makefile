@@ -49,6 +49,7 @@ skylark: src/main.c libskylark.a rom2c
 
 # Build the tests binary
 skylark_tests_sources =  \
+  src/chip8_test.c       \
   src/isa_test.c
 
 skylark_tests: $(skylark_tests_sources) src/main_test.c libskylark.a

@@ -15,7 +15,12 @@ enum {
 
 enum {
     CHIP8_OK = 0,
-    CHIP8_ERROR,
+    CHIP8_ERROR_OVERSIZED_ROM,
+    CHIP8_ERROR_STACK_OVERFLOW,
+    CHIP8_ERROR_STACK_UNDERFLOW,
+    CHIP8_ERROR_INVALID_INSTRUCTION,
+    CHIP8_ERROR_UNDEFINED_OPERATION,
+    CHIP8_ERROR_COUNT,
 };
 
 struct chip8 {
@@ -35,7 +40,9 @@ struct chip8 {
     uint8_t timer_sound;
 };
 
-int chip8_init(struct chip8* chip8, const uint8_t* rom, long size);
+int chip8_init(struct chip8* chip8);
+int chip8_load(struct chip8* chip8, const uint8_t* rom, long size);
 int chip8_step(struct chip8* chip8);
+const char* chip8_error_message(int error);
 
 #endif
