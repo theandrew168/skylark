@@ -462,6 +462,17 @@ chip8_step(struct chip8* chip8)
     return CHIP8_OK;
 }
 
+bool
+chip8_pixel(const struct chip8* chip8, long x, long y)
+{
+    if (x < 0 || x >= CHIP8_DISPLAY_WIDTH) return false;
+    if (y < 0 || y >= CHIP8_DISPLAY_HEIGHT) return false;
+
+    // row-major ordering
+    long index = (y * CHIP8_DISPLAY_WIDTH) + x;
+    return chip8->display[index];
+}
+
 const char*
 chip8_error_message(int error)
 {
