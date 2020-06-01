@@ -19,7 +19,7 @@ main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    FILE* fp = fopen(argv[1], "r");
+    FILE* fp = fopen(argv[1], "rb");
     if (fp == NULL) {
         fprintf(stderr, "failed to open rom: %s\n", argv[1]);
         return EXIT_FAILURE;

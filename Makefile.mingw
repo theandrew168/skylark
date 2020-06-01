@@ -4,18 +4,33 @@
 
 
 # Declare compiler tools and flags
-AR      = ar
-CC      = cc
-CFLAGS  = -std=c99
+AR      = x86_64-w64-mingw32-ar
+CC      = x86_64-w64-mingw32-gcc
+CFLAGS  = -std=c99 -D__USE_MINGW_ANSI_STDIO
 CFLAGS += -fPIC -g -Og
 CFLAGS += -Wall -Wextra -Wpedantic
 CFLAGS += -Wno-unused
-CFLAGS += -Isrc/
+CFLAGS += -Isrc/ -I./SDL2/include
 
 
 # Declare which targets should be built by default
-default: skylark skylark_tests
-all: libskylark.a libskylark.so skylark skylark_tests dis rom2c
+default: skylark.exe skylark_tests.exe
+all: libskylark.a libskylark.dll skylark.exe skylark_tests.exe dis.exe rom2c.exe
+
+
+# Dependencies required to statically link SDL2
+# (these can be found in SDL2/lib/cmake/SDL2/sdl2-config.cmake)
+SDL2_LDLIBS = -lmingw32                             \
+  ./SDL2/lib/libSDL2main.a ./SDL2/lib/libSDL2.a     \
+  -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32  \
+  -lwinmm -limm32 -lole32 -loleaut32 -lshell32      \
+  -lsetupapi -lversion -luuid -static-libgcc
+
+# Download pre-compiled SDL2 libraries for Windows
+./SDL2/lib/libSDL2.a:
+	wget https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz
+	tar -xf SDL2-devel-2.0.12-mingw.tar.gz
+	mv SDL2-2.0.12/x86_64-w64-mingw32/ SDL2/
 
 
 # Declare static / shared library sources
@@ -34,15 +49,15 @@ libskylark.a: $(libskylark_objects)
 	@$(AR) rcs $@ $(libskylark_objects)
 
 # Build the shared library
-libskylark.so: $(libskylark_objects)
+libskylark.dll: $(libskylark_objects) ./SDL2/lib/libSDL2.a
 	@echo "SHARED  $@"
-	@$(CC) -shared -o $@ $(libskylark_objects) -lSDL2
+	@$(CC) -shared -mwindows -o $@ $(libskylark_objects) $(SDL2_LDLIBS)
 
 
 # Build the main binary
-skylark: src/main.c libskylark.a
+skylark.exe: src/main.c libskylark.a ./SDL2/lib/libSDL2.a
 	@echo "EXE     $@"
-	@$(CC) $(CFLAGS) -o $@ src/main.c libskylark.a -lSDL2
+	@$(CC) $(CFLAGS) -mwindows -o $@ src/main.c libskylark.a $(SDL2_LDLIBS)
 
 
 # Build the tests binary
@@ -50,32 +65,32 @@ skylark_tests_sources =  \
   src/chip8_test.c       \
   src/isa_test.c
 
-skylark_tests: $(skylark_tests_sources) src/main_test.c libskylark.a
+skylark_tests.exe: $(skylark_tests_sources) src/main_test.c libskylark.a
 	@echo "EXE     $@"
 	@$(CC) $(CFLAGS) -o $@ src/main_test.c libskylark.a
 
 
 # Build the disassembler
-dis: tools/dis.c libskylark.a
+dis.exe: tools/dis.c libskylark.a
 	@echo "EXE     $@"
 	@$(CC) $(CFLAGS) -o $@ tools/dis.c libskylark.a
 
 
 # Build the ROM to C conversion tool
-rom2c: tools/rom2c.c
+rom2c.exe: tools/rom2c.c
 	@echo "EXE     $@"
 	@$(CC) $(CFLAGS) -o $@ tools/rom2c.c
 
 
 # Helper target that builds and runs the test binary
 .PHONY: check
-check: skylark_tests
-	./skylark_tests
+check: skylark_tests.exe
+	./skylark_tests.exe
 
 # Helper target that cleans up build artifacts
 .PHONY: clean
 clean:
-	rm -fr skylark skylark_tests dis rom2c *.a *.so src/*.o
+	rm -fr *exe *.a *.dll src/*.o SDL2*
 
 
 # Default rule for compiling .c files to .o object files
