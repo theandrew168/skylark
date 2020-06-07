@@ -67,12 +67,11 @@ main(int argc, char* argv[])
         SDL_WINDOWPOS_UNDEFINED,
         CHIP8_DISPLAY_WIDTH * SKYLARK_DISPLAY_PIXEL_SIZE,
         CHIP8_DISPLAY_HEIGHT * SKYLARK_DISPLAY_PIXEL_SIZE,
-        SDL_WINDOW_SHOWN);
+        SDL_WINDOW_RESIZABLE);
     if (window == NULL) {
         fprintf(stderr, "failed to create SDL2 window: %s\n", SDL_GetError());
         return EXIT_FAILURE;
     }
-    SDL_SetWindowResizable(window, SDL_TRUE);
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) {
@@ -88,7 +87,7 @@ main(int argc, char* argv[])
         SDL_Event event = { 0 };
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) running = false;
-            if (event.type == SDL_KEYDOWN) {
+            if (event.type == SDL_KEYUP) {
                 SDL_Keycode key = event.key.keysym.sym;
                 if (key == SDLK_ESCAPE) running = false;
             }

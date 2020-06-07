@@ -3,6 +3,9 @@ skylark_tests
 dis
 rom2c
 
+# SDL2 flies
+SDL2*
+
 # Vim swap files
 *.swp
 

@@ -11,6 +11,8 @@ CFLAGS += -fPIC -g -Og
 CFLAGS += -Wall -Wextra -Wpedantic
 CFLAGS += -Wno-unused
 CFLAGS += -Isrc/
+LDFLAGS =
+LDLIBS  = -lSDL2
 
 
 # Declare which targets should be built by default
@@ -36,13 +38,13 @@ libskylark.a: $(libskylark_objects)
 # Build the shared library
 libskylark.so: $(libskylark_objects)
 	@echo "SHARED  $@"
-	@$(CC) -shared -o $@ $(libskylark_objects) -lSDL2
+	@$(CC) $(LDFLAGS) -shared -o $@ $(libskylark_objects) $(LDLIBS)
 
 
 # Build the main binary
 skylark: src/main.c libskylark.a
 	@echo "EXE     $@"
-	@$(CC) $(CFLAGS) -o $@ src/main.c libskylark.a -lSDL2
+	@$(CC) $(CFLAGS) $(LDFLAGS) -o $@ src/main.c libskylark.a $(LDLIBS)
 
 
 # Build the tests binary

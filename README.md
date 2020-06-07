@@ -2,7 +2,7 @@
 This is a cross-platform [CHIP-8](https://en.wikipedia.org/wiki/CHIP-8) emulator written in C99.
 
 ## Dependencies
-[SDL2](https://www.libsdl.org/index.php) (zlib) - Window creation / basic rendering  
+[SDL2](https://www.libsdl.org/index.php) (zlib) - Simple DirectMedia Layer
 
 ## Building
 This project is built using POSIX-compatible [make](https://pubs.opengroup.org/onlinepubs/009695399/utilities/make.html).
@@ -11,26 +11,26 @@ For Windows builds, [mingw-w64](http://mingw-w64.org/doku.php) is used to cross-
 
 ### Linux (Native, Debian-based)
 ```
-sudo apt install libsdl2-dev
+sudo apt install make libsdl2-dev
 make
 ```
 
 ### macOS (Native)
 ```
-brew install sdl2
+brew install make sdl2
 make -f Makefile.macos
 ```
 
 ### Windows (Cross-Compile)
 From Linux (Debian-based):
 ```
-sudo apt install mingw-w64 wget
+sudo apt install make wget tar mingw-w64
 make -f Makefile.mingw
 ```
 
 From macOS:
 ```
-brew install mingw-w64 wget
+brew install make wget gnu-tar mingw-w64
 make -f Makefile.mingw
 ```
 

@@ -11,20 +11,16 @@ CFLAGS += -fPIC -g -Og
 CFLAGS += -Wall -Wextra -Wpedantic
 CFLAGS += -Wno-unused
 CFLAGS += -Isrc/ -I./SDL2/include
-
+LDFLAGS = -mwindows
+LDLIBS  = -lmingw32
+LDLIBS += ./SDL2/lib/libSDL2main.a ./SDL2/lib/libSDL2.a
+LDLIBS += -lgdi32 -limm32 -lole32 -loleaut32
+LDLIBS += -lopengl32 -lsetupapi -lversion -lwinmm
 
 # Declare which targets should be built by default
 default: skylark.exe skylark_tests.exe
 all: libskylark.a libskylark.dll skylark.exe skylark_tests.exe dis.exe rom2c.exe
 
-
-# Dependencies required to statically link SDL2
-# (these can be found in SDL2/lib/cmake/SDL2/sdl2-config.cmake)
-SDL2_LDLIBS = -lmingw32                             \
-  ./SDL2/lib/libSDL2main.a ./SDL2/lib/libSDL2.a     \
-  -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32  \
-  -lwinmm -limm32 -lole32 -loleaut32 -lshell32      \
-  -lsetupapi -lversion -luuid -static-libgcc
 
 # Download pre-compiled SDL2 libraries for Windows
 ./SDL2/lib/libSDL2.a:
@@ -51,13 +47,13 @@ libskylark.a: $(libskylark_objects)
 # Build the shared library
 libskylark.dll: $(libskylark_objects) ./SDL2/lib/libSDL2.a
 	@echo "SHARED  $@"
-	@$(CC) -shared -mwindows -o $@ $(libskylark_objects) $(SDL2_LDLIBS)
+	@$(CC) $(LDFLAGS) -shared -o $@ $(libskylark_objects) $(LDLIBS)
 
 
 # Build the main binary
 skylark.exe: src/main.c libskylark.a ./SDL2/lib/libSDL2.a
 	@echo "EXE     $@"
-	@$(CC) $(CFLAGS) -mwindows -o $@ src/main.c libskylark.a $(SDL2_LDLIBS)
+	@$(CC) $(CFLAGS) $(LDFLAGS) -o $@ src/main.c libskylark.a $(LDLIBS)
 
 
 # Build the tests binary
@@ -90,7 +86,7 @@ check: skylark_tests.exe
 # Helper target that cleans up build artifacts
 .PHONY: clean
 clean:
-	rm -fr *exe *.a *.dll src/*.o SDL2*
+	rm -fr *exe *.a *.dll src/*.o
 
 
 # Default rule for compiling .c files to .o object files
