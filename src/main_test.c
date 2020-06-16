@@ -14,6 +14,8 @@ static const test_func TESTS[] = {
     test_operation_UNDEFINED,
     test_operation_CLS_00E0,
     test_operation_RET_00EE,
+    test_operation_SYS_0nnn,
+    test_operation_JP_1nnn,
 };
 
 int

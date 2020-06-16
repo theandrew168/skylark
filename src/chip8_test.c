@@ -80,10 +80,11 @@ test_operation_RET_00EE(void)
         return false;
     }
 
-    // simulate a CALL_2nnn to setup a valid return
-    uint16_t ret_addr = 0x0123;
-    chip8.stack[0] = ret_addr;
-    chip8.sp += 1;
+    // execute a CALL_2nnn to setup a valid return
+    operation_CALL_2nnn(&chip8, &(struct instruction){
+        .opcode = OPCODE_CALL_2nnn,
+        .nnn = 0x234,
+    });
 
     rc = operation_RET_00EE(&chip8, &inst);
     if (rc != CHIP8_OK) {
@@ -91,8 +92,59 @@ test_operation_RET_00EE(void)
         return false;
     }
 
-    if (chip8.pc != ret_addr + 2) {
-        fprintf(stderr, "operation_RET_00EE failed pop stack value into program counter\n");
+    // pc will be 0x0002 because the CALL_2nnn was made from pc == 0
+    if (chip8.pc != 0x0002) {
+        fprintf(stderr, "operation_RET_00EE returned to the wrong address\n");
+        return false;
+    }
+
+    return true;
+}
+
+bool
+test_operation_SYS_0nnn(void)
+{
+    struct chip8 chip8 = { 0 };
+    chip8_init(&chip8);
+
+    struct instruction inst = {
+        .opcode = OPCODE_SYS_0nnn,
+        .nnn = 0x234,
+    };
+
+    int rc = operation_SYS_0nnn(&chip8, &inst);
+    if (rc != CHIP8_OK) {
+        fprintf(stderr, "operation_SYS_0nnn returned an error: %s\n", chip8_error_message(rc));
+        return false;
+    }
+
+    if (chip8.pc != 0x234) {
+        fprintf(stderr, "operation_SYS_0nnn set the program counter to the wrong value\n");
+        return false;
+    }
+
+    return true;
+}
+
+bool
+test_operation_JP_1nnn(void)
+{
+    struct chip8 chip8 = { 0 };
+    chip8_init(&chip8);
+
+    struct instruction inst = {
+        .opcode = OPCODE_JP_1nnn,
+        .nnn = 0x234,
+    };
+
+    int rc = operation_JP_1nnn(&chip8, &inst);
+    if (rc != CHIP8_OK) {
+        fprintf(stderr, "operation_JP_1nnn returned an error: %s\n", chip8_error_message(rc));
+        return false;
+    }
+
+    if (chip8.pc != 0x234) {
+        fprintf(stderr, "operation_JP_1nnn set the program counter to the wrong value\n");
         return false;
     }
 
