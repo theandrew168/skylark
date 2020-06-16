@@ -43,7 +43,7 @@ static const uint8_t CHIP8_FONT[] = {
     0xf0, 0x80, 0xf0, 0x80, 0x80  /* F */
 };
 
-typedef int operation_func(struct chip8* chip8, const struct instruction* inst);
+typedef int (*operation_func)(struct chip8* chip8, const struct instruction* inst);
 
 static int
 operation_UNDEFINED(struct chip8* chip8, const struct instruction* inst)
@@ -338,7 +338,7 @@ operation_ADD_Fx1E(struct chip8* chip8, const struct instruction* inst)
 static int
 operation_LD_Fx29(struct chip8* chip8, const struct instruction* inst)
 {
-    chip8->index += inst->x * CHIP8_FONT_SIZE;
+    chip8->index = chip8->reg[inst->x] * 5;
     chip8->pc += 2;
     return CHIP8_OK;
 }
@@ -373,7 +373,7 @@ operation_LD_Fx65(struct chip8* chip8, const struct instruction* inst)
     return CHIP8_OK;
 }
 
-static operation_func* OPERATIONS[] = {
+static operation_func OPERATIONS[] = {
     [OPCODE_UNDEFINED] = operation_UNDEFINED,
     [OPCODE_CLS_00E0] = operation_CLS_00E0,
     [OPCODE_RET_00EE] = operation_RET_00EE,
@@ -420,6 +420,8 @@ chip8_init(struct chip8* chip8)
     memset(chip8, 0, sizeof(*chip8));
     srand(time(NULL));
 
+    memmove(chip8->mem, CHIP8_FONT, sizeof(CHIP8_FONT));
+
     return CHIP8_OK;
 }
 
@@ -450,7 +452,7 @@ chip8_step(struct chip8* chip8)
     }
 
     // lookup and execute the operation for a given instruction
-    operation_func* operation = OPERATIONS[inst.opcode];
+    operation_func operation = OPERATIONS[inst.opcode];
     rc = operation(chip8, &inst);
     if (rc != CHIP8_OK) {
         return rc;
@@ -478,7 +480,7 @@ chip8_error_message(int error)
 {
     switch (error) {
     case CHIP8_OK: return "OK";
-    case CHIP8_ERROR_OVERSIZED_ROM: return "ROM is too large for a CHIP-8";
+    case CHIP8_ERROR_OVERSIZED_ROM: return "ROM is too large for a CHIP-8 system";
     case CHIP8_ERROR_STACK_OVERFLOW: return "ROM execution overflowed the CHIP-8 stack";
     case CHIP8_ERROR_STACK_UNDERFLOW: return "ROM execution underflowed the CHIP-8 stack";
     case CHIP8_ERROR_INVALID_INSTRUCTION: return "ROM execution encountered an invalid instruction";

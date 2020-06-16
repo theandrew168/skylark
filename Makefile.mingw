@@ -4,22 +4,23 @@
 
 
 # Declare compiler tools and flags
-AR      = x86_64-w64-mingw32-ar
-CC      = x86_64-w64-mingw32-gcc
-CFLAGS  = -std=c99 -D__USE_MINGW_ANSI_STDIO
-CFLAGS += -fPIC -g -Og
-CFLAGS += -Wall -Wextra -Wpedantic
-CFLAGS += -Wno-unused
-CFLAGS += -Isrc/ -I./SDL2/include
-LDFLAGS = -mwindows
-LDLIBS  = -lmingw32
-LDLIBS += ./SDL2/lib/libSDL2main.a ./SDL2/lib/libSDL2.a
-LDLIBS += -lgdi32 -limm32 -lole32 -loleaut32
-LDLIBS += -lopengl32 -lsetupapi -lversion -lwinmm
+AR       = x86_64-w64-mingw32-ar
+CC       = x86_64-w64-mingw32-gcc
+NATIVECC = cc
+CFLAGS   = -std=c99 -D__USE_MINGW_ANSI_STDIO
+CFLAGS  += -fPIC -g -Og
+CFLAGS  += -Wall -Wextra -Wpedantic
+CFLAGS  += -Wno-unused
+CFLAGS  += -Isrc/ -I./SDL2/include
+LDFLAGS  = -mwindows
+LDLIBS   = -lmingw32
+LDLIBS  += ./SDL2/lib/libSDL2main.a ./SDL2/lib/libSDL2.a
+LDLIBS  += -lgdi32 -limm32 -lole32 -loleaut32
+LDLIBS  += -lopengl32 -lsetupapi -lversion -lwinmm
 
 # Declare which targets should be built by default
 default: skylark.exe skylark_tests.exe
-all: libskylark.a libskylark.dll skylark.exe skylark_tests.exe dis.exe rom2c.exe
+all: libskylark.a libskylark.dll skylark.exe skylark_tests.exe dis.exe rom2c
 
 
 # Download pre-compiled SDL2 libraries for Windows
@@ -73,9 +74,9 @@ dis.exe: tools/dis.c libskylark.a
 
 
 # Build the ROM to C conversion tool
-rom2c.exe: tools/rom2c.c
+rom2c: tools/rom2c.c
 	@echo "EXE     $@"
-	@$(CC) $(CFLAGS) -o $@ tools/rom2c.c
+	@$(NATIVECC) $(CFLAGS) -o $@ tools/rom2c.c
 
 
 # Helper target that builds and runs the test binary
