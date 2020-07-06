@@ -9,8 +9,8 @@ CC      = cc
 CFLAGS  = -std=c99
 CFLAGS += -fPIC -g -Og
 CFLAGS += -Wall -Wextra -Wpedantic
-CFLAGS += -Wno-unused
-CFLAGS += -Isrc/
+CFLAGS += -Wno-unused-parameter
+CFLAGS += -Isrc/ -I/usr/include/SDL2
 LDFLAGS =
 LDLIBS  = -lSDL2
 
