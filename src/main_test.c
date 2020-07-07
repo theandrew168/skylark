@@ -5,12 +5,11 @@
 #include <stdlib.h>
 
 #include "chip8_test.c"
-#include "isa_test.c"
 
 typedef bool (*test_func)(void);
 
 static const test_func TESTS[] = {
-    test_isa_instruction_decode,
+    test_chip8_instruction_decode,
     test_operation_UNDEFINED,
     test_operation_CLS_00E0,
     test_operation_RET_00EE,
