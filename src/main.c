@@ -80,6 +80,7 @@ main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+
     bool running = true;
     while (running) {
         // input
@@ -107,7 +108,7 @@ main(int argc, char* argv[])
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         for (long y = 0; y < CHIP8_DISPLAY_HEIGHT; y++) {
             for (long x = 0; x < CHIP8_DISPLAY_WIDTH; x++) {
-                if (!chip8_pixel_on(&chip8, x, y)) continue;
+                if (!chip8_pixel(&chip8, x, y)) continue;
 
                 SDL_Rect pixel = {
                     .w = SKYLARK_DISPLAY_PIXEL_SIZE,
