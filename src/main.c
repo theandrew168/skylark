@@ -96,7 +96,6 @@ main(int argc, char* argv[])
         // execute the next instruction
         rc = chip8_step(&chip8);
         if (rc != CHIP8_OK) {
-            fprintf(stderr, "error: %s\n", chip8_error_message(rc));
             running = false;
             break;
         }

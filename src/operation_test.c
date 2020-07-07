@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "chip8.c"
+#include "operation.c"
 
 bool
 test_operation_UNDEFINED(void)
@@ -43,7 +43,7 @@ test_operation_CLS_00E0(void)
     uint16_t pc_before = chip8.pc;
     int rc = operation_CLS_00E0(&chip8, &inst);
     if (rc != CHIP8_OK) {
-        fprintf(stderr, "operation_CLS_00E0 returned an error: %s\n", chip8_error_message(rc));
+        fprintf(stderr, "operation_CLS_00E0 returned an error: %s\n", operation_error_message(rc));
         return false;
     }
 
@@ -75,7 +75,7 @@ test_operation_RET_00EE(void)
     // validate that calling RET_00EE with an empty stack returns an error
     chip8.sp = 0;
     int rc = operation_RET_00EE(&chip8, &inst);
-    if (rc != CHIP8_ERROR_STACK_UNDERFLOW) {
+    if (rc != OPERATION_ERROR_STACK_UNDERFLOW) {
         fprintf(stderr, "operation_RET_00EE did not underflow the stack\n");
         return false;
     }
@@ -88,7 +88,7 @@ test_operation_RET_00EE(void)
 
     rc = operation_RET_00EE(&chip8, &inst);
     if (rc != CHIP8_OK) {
-        fprintf(stderr, "operation_RET_00EE returned an error: %s\n", chip8_error_message(rc));
+        fprintf(stderr, "operation_RET_00EE returned an error: %s\n", operation_error_message(rc));
         return false;
     }
 
@@ -114,7 +114,7 @@ test_operation_SYS_0nnn(void)
 
     int rc = operation_SYS_0nnn(&chip8, &inst);
     if (rc != CHIP8_OK) {
-        fprintf(stderr, "operation_SYS_0nnn returned an error: %s\n", chip8_error_message(rc));
+        fprintf(stderr, "operation_SYS_0nnn returned an error: %s\n", operation_error_message(rc));
         return false;
     }
 
@@ -139,7 +139,7 @@ test_operation_JP_1nnn(void)
 
     int rc = operation_JP_1nnn(&chip8, &inst);
     if (rc != CHIP8_OK) {
-        fprintf(stderr, "operation_JP_1nnn returned an error: %s\n", chip8_error_message(rc));
+        fprintf(stderr, "operation_JP_1nnn returned an error: %s\n", operation_error_message(rc));
         return false;
     }
 

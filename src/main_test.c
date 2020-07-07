@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "chip8_test.c"
 #include "instruction_test.c"
+#include "operation_test.c"
 
 typedef bool (*test_func)(void);
 
