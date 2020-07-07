@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "isa.h"
+#include "instruction.h"
 
 static const struct {
     uint16_t mask;
@@ -85,7 +85,7 @@ static const char* INSTRUCTION_NAMES[] = {
 };
 
 int
-isa_instruction_decode(struct instruction* inst, uint16_t code)
+instruction_decode(struct instruction* inst, uint16_t code)
 {
     // params can be set now since their position is consistent
     inst->opcode = OPCODE_UNDEFINED;
@@ -100,16 +100,16 @@ isa_instruction_decode(struct instruction* inst, uint16_t code)
         // check for a match by masking the code and comparing the values
         if ((code & INSTRUCTION_MASKS[op].mask) == INSTRUCTION_MASKS[op].value) {
             inst->opcode = op;
-            return ISA_OK;
+            return INSTRUCTION_OK;
         }
     }
 
     // if nothing matched from the above loop then the code is invalid
-    return ISA_ERROR;
+    return INSTRUCTION_ERROR;
 }
 
 const char*
-isa_instruction_name(const struct instruction* inst)
+instruction_name(const struct instruction* inst)
 {
     if (inst->opcode <= OPCODE_UNDEFINED || inst->opcode >= OPCODE_COUNT) {
         return INSTRUCTION_NAMES[OPCODE_UNDEFINED];

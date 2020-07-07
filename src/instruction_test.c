@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "isa.c"
+#include "instruction.c"
 
 bool
-test_isa_instruction_decode(void)
+test_instruction_decode(void)
 {
     const struct {
         uint16_t code;
@@ -53,8 +53,8 @@ test_isa_instruction_decode(void)
 
     struct instruction inst = { 0 };
     for (long i = 0; i < num_tests; i++) {
-        int rc = isa_instruction_decode(&inst, tests[i].code);
-        if (rc != ISA_OK) {
+        int rc = instruction_decode(&inst, tests[i].code);
+        if (rc != INSTRUCTION_OK) {
             fprintf(stderr, "failed to decode instruction: %04x\n", tests[i].code);
             return false;
         }

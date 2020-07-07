@@ -1,5 +1,5 @@
-#ifndef SKYLARK_ISA_H_INCLUDED
-#define SKYLARK_ISA_H_INCLUDED
+#ifndef SKYLARK_INSTRUCTION_H_INCLUDED
+#define SKYLARK_INSTRUCTION_H_INCLUDED
 
 #include <stdint.h>
 
@@ -52,12 +52,12 @@ struct instruction {
     uint8_t kk;
 };
 
-enum isa_status {
-    ISA_OK = 0,
-    ISA_ERROR,
+enum instruction_status {
+    INSTRUCTION_OK = 0,
+    INSTRUCTION_ERROR,
 };
 
-int isa_instruction_decode(struct instruction* inst, uint16_t code);
-const char* isa_instruction_name(const struct instruction* inst);
+int instruction_decode(struct instruction* inst, uint16_t code);
+const char* instruction_name(const struct instruction* inst);
 
 #endif

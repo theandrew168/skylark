@@ -6,7 +6,7 @@
 #include <time.h>
 
 #include "chip8.h"
-#include "isa.h"
+#include "instruction.h"
 
 enum {
     CHIP8_REG_V0 = 0,
@@ -446,8 +446,8 @@ chip8_step(struct chip8* chip8)
     uint16_t code = chip8->mem[chip8->pc] << 8 | chip8->mem[chip8->pc + 1];
 
     struct instruction inst = { 0 };
-    int rc = isa_instruction_decode(&inst, code);
-    if (rc != ISA_OK) {
+    int rc = instruction_decode(&inst, code);
+    if (rc != INSTRUCTION_OK) {
         return CHIP8_ERROR_INVALID_INSTRUCTION;
     }
 
