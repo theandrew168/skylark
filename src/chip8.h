@@ -45,6 +45,6 @@ struct chip8 {
 int chip8_init(struct chip8* chip8);
 int chip8_load(struct chip8* chip8, const uint8_t* rom, long size);
 int chip8_step(struct chip8* chip8);
-bool chip8_pixel(const struct chip8* chip8, long x, long y);
+bool chip8_pixel_on(const struct chip8* chip8, long x, long y);
 
 #endif

@@ -71,14 +71,13 @@ chip8_step(struct chip8* chip8)
     struct instruction inst = { 0 };
     int rc = instruction_decode(&inst, code);
     if (rc != INSTRUCTION_OK) {
-        // TODO: what to do here? print inst error and return BAD_INST or something?
+        fprintf(stderr, "attempted to decode a bad instruction\n");
         return CHIP8_ERROR_BAD_INSTRUCTION;
     }
 
-    // lookup and execute the operation for a given instruction
     rc = operation_apply(chip8, &inst);
     if (rc != OPERATION_OK) {
-        // TODO: what to do here? print op error and return BAD_OP or something?
+        fprintf(stderr, "attempted to execute a bad operation: %s\n", operation_error_message(rc));
         return CHIP8_ERROR_BAD_OPERATION;
     }
 
@@ -89,7 +88,7 @@ chip8_step(struct chip8* chip8)
 }
 
 bool
-chip8_pixel(const struct chip8* chip8, long x, long y)
+chip8_pixel_on(const struct chip8* chip8, long x, long y)
 {
     if (x < 0 || x >= CHIP8_DISPLAY_WIDTH) return false;
     if (y < 0 || y >= CHIP8_DISPLAY_HEIGHT) return false;

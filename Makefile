@@ -17,7 +17,7 @@ LDLIBS  = -lSDL2
 
 # Declare which targets should be built by default
 default: skylark skylark_tests
-all: libskylark.a libskylark.so skylark skylark_tests dis rom2c
+all: libskylark.a libskylark.so skylark skylark_tests
 
 
 # Declare static / shared library sources
@@ -59,18 +59,6 @@ skylark_tests: $(skylark_tests_sources) src/main_test.c libskylark.a
 	@$(CC) $(CFLAGS) -o $@ src/main_test.c libskylark.a
 
 
-# Build the disassembler
-dis: tools/dis.c libskylark.a
-	@echo "EXE     $@"
-	@$(CC) $(CFLAGS) -o $@ tools/dis.c libskylark.a
-
-
-# Build the ROM to C conversion tool
-rom2c: tools/rom2c.c
-	@echo "EXE     $@"
-	@$(CC) $(CFLAGS) -o $@ tools/rom2c.c
-
-
 # Helper target that builds and runs the test binary
 .PHONY: check
 check: skylark_tests
@@ -79,7 +67,7 @@ check: skylark_tests
 # Helper target that cleans up build artifacts
 .PHONY: clean
 clean:
-	rm -fr skylark skylark_tests dis rom2c *.a *.so src/*.o
+	rm -fr skylark skylark_tests *.a *.so src/*.o
 
 
 # Default rule for compiling .c files to .o object files
