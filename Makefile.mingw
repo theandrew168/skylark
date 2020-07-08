@@ -6,11 +6,10 @@
 # Declare compiler tools and flags
 AR       = x86_64-w64-mingw32-ar
 CC       = x86_64-w64-mingw32-gcc
-NATIVECC = cc
 CFLAGS   = -std=c99 -D__USE_MINGW_ANSI_STDIO
 CFLAGS  += -fPIC -g -Og
 CFLAGS  += -Wall -Wextra -Wpedantic
-CFLAGS  += -Wno-unused
+CFLAGS  += -Wno-unused-parameter
 CFLAGS  += -Isrc/ -I./SDL2/include
 LDFLAGS  = -mwindows
 LDLIBS   = -lmingw32
@@ -20,7 +19,7 @@ LDLIBS  += -lopengl32 -lsetupapi -lversion -lwinmm
 
 # Declare which targets should be built by default
 default: skylark.exe skylark_tests.exe
-all: libskylark.a libskylark.dll skylark.exe skylark_tests.exe dis.exe rom2c
+all: libskylark.a libskylark.dll skylark.exe skylark_tests.exe
 
 
 # Download pre-compiled SDL2 libraries for Windows
@@ -33,12 +32,14 @@ all: libskylark.a libskylark.dll skylark.exe skylark_tests.exe dis.exe rom2c
 # Declare static / shared library sources
 libskylark_sources =  \
   src/chip8.c         \
-  src/isa.c
+  src/instruction.c   \
+  src/operation.c
 libskylark_objects = $(libskylark_sources:.c=.o)
 
 # Express dependencies between object and source files
-src/chip8.o: src/chip8.c src/chip8.h src/isa.h
-src/isa.o: src/isa.c src/isa.h
+src/chip8.o: src/chip8.c src/chip8.h src/instruction.h
+src/instruction.o: src/instruction.c src/instruction.h
+src/operation.o: src/operation.c src/operation.h src/instruction.h src/chip8.h
 
 # Build the static library
 libskylark.a: $(libskylark_objects)
@@ -58,31 +59,14 @@ skylark.exe: src/main.c libskylark.a ./SDL2/lib/libSDL2.a
 
 
 # Build the tests binary
-skylark_tests_sources =  \
-  src/chip8_test.c       \
-  src/isa_test.c
+skylark_tests_sources =   \
+  src/instruction_test.c  \
+  src/operation_test.c
 
 skylark_tests.exe: $(skylark_tests_sources) src/main_test.c libskylark.a
 	@echo "EXE     $@"
 	@$(CC) $(CFLAGS) -o $@ src/main_test.c libskylark.a
 
-
-# Build the disassembler
-dis.exe: tools/dis.c libskylark.a
-	@echo "EXE     $@"
-	@$(CC) $(CFLAGS) -o $@ tools/dis.c libskylark.a
-
-
-# Build the ROM to C conversion tool
-rom2c: tools/rom2c.c
-	@echo "EXE     $@"
-	@$(NATIVECC) $(CFLAGS) -o $@ tools/rom2c.c
-
-
-# Helper target that builds and runs the test binary
-.PHONY: check
-check: skylark_tests.exe
-	./skylark_tests.exe
 
 # Helper target that cleans up build artifacts
 .PHONY: clean
