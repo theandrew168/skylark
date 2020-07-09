@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "instruction.c"
+#include "inst.c"
 
 bool
 test_instruction_decode(void)

@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "instruction.h"
+#include "inst.h"
 
 static const struct {
     uint16_t mask;

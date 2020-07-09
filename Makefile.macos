@@ -23,14 +23,14 @@ all: libskylark.a libskylark.so skylark skylark_tests
 # Declare static / shared library sources
 libskylark_sources =  \
   src/chip8.c         \
-  src/instruction.c   \
-  src/operation.c
+  src/inst.c          \
+  src/op.c
 libskylark_objects = $(libskylark_sources:.c=.o)
 
 # Express dependencies between object and source files
-src/chip8.o: src/chip8.c src/chip8.h src/instruction.h
-src/instruction.o: src/instruction.c src/instruction.h
-src/operation.o: src/operation.c src/operation.h src/instruction.h src/chip8.h
+src/chip8.o: src/chip8.c src/chip8.h src/inst.h
+src/inst.o: src/inst.c src/inst.h
+src/op.o: src/op.c src/op.h src/inst.h src/chip8.h
 
 # Build the static library
 libskylark.a: $(libskylark_objects)
@@ -51,8 +51,8 @@ skylark: src/main.c libskylark.a
 
 # Build the tests binary
 skylark_tests_sources =   \
-  src/instruction_test.c  \
-  src/operation_test.c
+  src/inst_test.c  \
+  src/op_test.c
 
 skylark_tests: $(skylark_tests_sources) src/main_test.c libskylark.a
 	@echo "EXE     $@"

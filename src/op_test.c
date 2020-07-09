@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "operation.c"
+#include "op.c"
 
 bool
 test_operation_UNDEFINED(void)

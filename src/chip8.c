@@ -6,8 +6,8 @@
 #include <time.h>
 
 #include "chip8.h"
-#include "instruction.h"
-#include "operation.h"
+#include "inst.h"
+#include "op.h"
 
 // Chip8 font information
 // 'A', for example:

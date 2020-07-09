@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "chip8.h"
-#include "instruction.h"
-#include "operation.h"
+#include "inst.h"
+#include "op.h"
 
 typedef int (*operation_func)(struct chip8* chip8, const struct instruction* inst);
 

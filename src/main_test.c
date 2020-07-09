@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "instruction_test.c"
-#include "operation_test.c"
+#include "inst_test.c"
+#include "op_test.c"
 
 typedef bool (*test_func)(void);
 

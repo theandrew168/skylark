@@ -1,8 +1,8 @@
-#ifndef SKYLARK_OPERATION_H_INCLUDED
-#define SKYLARK_OPERATION_H_INCLUDED
+#ifndef SKYLARK_OP_H_INCLUDED
+#define SKYLARK_OP_H_INCLUDED
 
-struct chip8;
-struct instruction;
+#include "chip8.h"
+#include "inst.h"
 
 enum operation_status {
     OPERATION_OK = 0,
